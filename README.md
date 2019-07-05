@@ -91,7 +91,7 @@ var customer = new Customer
 dao.Save(customer);
     
 // Id will be updated during save so it can be requested immediately after
-// assuming the Id column is declared as identity
+// (assuming the Id column is declared as identity)
 var generatedId = customer.Id;
    
 // update
