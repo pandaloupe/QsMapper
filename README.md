@@ -3,7 +3,6 @@ Conventional .Net SQL entity mapping framework.
 
 QsMapper provides a Linq-like fluent syntax for database operations on (MS)SQL Server databases.
 
-    var dao = new GenericDao(connectionString);
     var result = dao.Query<Customer>()  
        .Where(x => x.Field("FirstName").IsEqualTo("John"))  
        .And(x => x.Field("LastName").IsLike("Do%"))  
@@ -42,7 +41,8 @@ By default QsMapper makes use of sql database schemes.
     go
 
 The corresponding Class should reside in a folder/namespace named **Contacts** and the class name itself woule be **Customer**.
-Property names are mapped by convention of identical names (case sensitive).
+
+Property names are mapped by the convention of identical names (case sensitive).
 
     using Net.Arqsoft.QsMapper.Model; 
     
@@ -73,9 +73,9 @@ Please refer to Docs/GenericDao.md for more information.
     //create
     var customer = new Customer
     {
-    	Salutation = "Mr",
-	FirstName = "John",
-	LastName = "Doe"
+       Salutation = "Mr",
+       FirstName = "John",
+       LastName = "Doe"
     };
     
     dao.Save(customer);
