@@ -22,7 +22,7 @@ Implementations for other relational database management systems may be develope
 
 By default QsMapper makes use of sql database schemes.
 
-```sql
+```tsql
 create database QsSamples
 go 
 
