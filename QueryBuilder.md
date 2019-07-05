@@ -14,8 +14,8 @@ var dao = new GenericDao();
 // so the query builder assumes the table name to be 'Contacts.Customers'
 var result = dao.Query<Customer>()
  	.From("Contacts.Customers") // this is obsolete regarding to the convention mentioned above
- 	.Where(x => x.Field("LastName").IsEqualTo("Wolff"))  // cf. to operator list below
- 	.And(x => x.Field("City").IsEqualTo("Hamm")
+ 	.Where(x => x.Field("LastName").IsEqualTo("Doe"))  // cf. to operator list below
+ 	.And(x => x.Field("City").IsEqualTo("New York")
  	.OrderBy("LastName")
  	.ToList();
 ```
