@@ -98,6 +98,7 @@ var generatedId = customer.Id;
 customer.Birthday = new DateTime(1985, 10, 3);
     
 dao.Save(customer);
+```
     
 ## Retrieving single objects by id
 
@@ -145,7 +146,7 @@ dao.Execute("Sales.CreateJournal")
   .AsFunction();
 
 // with data output
-dao.Execute("Contacts.RetrieveCustomersByCityCodeRange")
+dao.Execute("Contacts.RetrieveCustomersByCityCode")
     .WithParamter("FirstCityCode", "20000")
     .WithParameter("LastCityCode", "29999")
     .AsListOf<Customer>();
