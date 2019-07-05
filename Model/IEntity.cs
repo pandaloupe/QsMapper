@@ -1,8 +1,10 @@
-﻿namespace Net.Arqsoft.QsMapper.Model {
+﻿namespace Net.Arqsoft.QsMapper.Model
+{
     /// <summary>
     /// Interface for all Entities.
     /// </summary>
-    public interface IEntity<T> {
+    public interface IEntity<T>
+    {
         /// <summary>
         /// Id property.
         /// </summary>

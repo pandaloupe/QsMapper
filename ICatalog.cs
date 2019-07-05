@@ -1,8 +1,10 @@
-namespace Net.Arqsoft.QsMapper {
+namespace Net.Arqsoft.QsMapper
+{
     /// <summary>
     /// Mapping catalog.
     /// </summary>
-    public interface ICatalog {
+    public interface ICatalog
+    {
         /// <summary>
         /// Return the configured map for a specific type.
         /// </summary>

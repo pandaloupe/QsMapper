@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using Net.Arqsoft.QsMapper.Model;
 
-namespace Net.Arqsoft.QsMapper.Caching {
+namespace Net.Arqsoft.QsMapper.Caching
+{
     /// <summary>
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IEntityCache<T> where T : IntegerBasedEntity, new() {
+    public interface IEntityCache<T> where T : IntegerBasedEntity, new()
+    {
         /// <summary>
         /// 
         /// </summary>

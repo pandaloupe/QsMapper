@@ -1,9 +1,9 @@
-﻿namespace Net.Arqsoft.QsMapper.QueryBuilder
-{
-    using System.Collections;
-    using global::System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
+namespace Net.Arqsoft.QsMapper.QueryBuilder
+{
     public class QueryParameter
     {
         public QueryParameter()

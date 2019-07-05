@@ -1,8 +1,10 @@
-﻿namespace Net.Arqsoft.QsMapper.Model {
+﻿namespace Net.Arqsoft.QsMapper.Model
+{
     /// <summary>
     /// interface for complex property definitions.
     /// </summary>
-    public interface IComplexProperty {
+    public interface IComplexProperty
+    {
         /// <summary>
         /// Return complex property itself.
         /// </summary>
@@ -15,6 +17,6 @@
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        object GetValue(object  item);
+        object GetValue(object item);
     }
 }

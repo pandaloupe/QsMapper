@@ -1,8 +1,8 @@
-﻿namespace Net.Arqsoft.QsMapper
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace Net.Arqsoft.QsMapper
+{
     /// <summary>
     /// Base Catalog returning a default TableMap if no specific map is registered for a type.
     /// Specific TableMaps may be specified in the constructor.

@@ -1,8 +1,8 @@
-﻿namespace Net.Arqsoft.QsMapper.QueryBuilder
-{
-    using System;
-    using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 
+namespace Net.Arqsoft.QsMapper.QueryBuilder
+{
     /// <summary>
     /// Establishes SQL logging for any command.
     /// Internally used by BaseQuery.ToList().

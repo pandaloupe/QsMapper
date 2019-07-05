@@ -119,6 +119,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="QueryBuilder.md" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

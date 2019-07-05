@@ -1,18 +1,21 @@
-﻿namespace Net.Arqsoft.QsMapper.QueryBuilder {
+﻿namespace Net.Arqsoft.QsMapper.QueryBuilder
+{
     /// <summary>
     /// Implements order by clause.
     /// </summary>
-    public class OrderParameter {
+    public class OrderParameter
+    {
         /// <summary>
         /// Constructor
         /// </summary>
-        public OrderParameter() {}
+        public OrderParameter() { }
 
         /// <summary>
         /// Constructor with fieldname
         /// </summary>
         /// <param name="fieldName"></param>
-        public OrderParameter(string fieldName) {
+        public OrderParameter(string fieldName)
+        {
             FieldName = fieldName;
         }
 
@@ -21,7 +24,8 @@
         /// </summary>
         /// <param name="fieldName"></param>
         /// <param name="descending"></param>
-        public OrderParameter(string fieldName, bool descending):this(fieldName) {
+        public OrderParameter(string fieldName, bool descending) : this(fieldName)
+        {
             SortDescending = descending;
         }
 

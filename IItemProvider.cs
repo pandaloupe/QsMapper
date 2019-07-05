@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace Net.Arqsoft.QsMapper {
+namespace Net.Arqsoft.QsMapper
+{
     /// <summary>
     /// Interface for simple caching
     /// </summary>
-    public interface IItemProvider<T> {
+    public interface IItemProvider<T>
+    {
         /// <summary>
         /// Rerturn current item instance from Cache
         /// </summary>

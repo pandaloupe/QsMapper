@@ -1,12 +1,12 @@
-﻿using System.Data.SqlClient;
+﻿using System.Collections.Generic;
 
-namespace Net.Arqsoft.QsMapper.CommandBuilder {
-    using System.Collections.Generic;
-
+namespace Net.Arqsoft.QsMapper.CommandBuilder
+{
     /// <summary>
     /// Wrapper interface for sql stored procedures.
     /// </summary>
-    public interface ICommand {
+    public interface ICommand
+    {
         /// <summary>
         /// Add a command parameter with name and value
         /// </summary>
@@ -14,7 +14,7 @@ namespace Net.Arqsoft.QsMapper.CommandBuilder {
         /// <param name="value">Value to pass as paramter</param>
         /// <returns>self (fluent syntax)</returns>
         ICommand WithParameter(string name, object value);
-        
+
         /// <summary>
         /// return generic list using the proc's result set
         /// </summary>
@@ -29,7 +29,7 @@ namespace Net.Arqsoft.QsMapper.CommandBuilder {
         /// <param name="returnValue">the proc's return value</param>
         /// <returns></returns>
         IList<T> AsListOf<T>(out int returnValue) where T : class, new();
-        
+
         /// <summary>
         /// Simply execute the stored procedure
         /// </summary>

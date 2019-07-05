@@ -14,16 +14,6 @@ namespace Net.Arqsoft.QsMapper
     {
         private readonly IDictionary<string, PropertyInfo> _mappedProperties = new Dictionary<string, PropertyInfo>();
         private readonly Type _type = typeof(T);
-        private readonly ICatalog _catalog;
-
-        /// <summary>
-        /// Create a new Property Mapper for the current catalog.
-        /// </summary>
-        /// <param name="catalog"></param>
-        public PropertyMapper(ICatalog catalog)
-        {
-            _catalog = catalog;
-        }
 
         /// <summary>
         /// Copy values from datareader to new object.

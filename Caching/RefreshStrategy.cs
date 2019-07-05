@@ -1,8 +1,10 @@
-﻿namespace Net.Arqsoft.QsMapper.Caching {
+﻿namespace Net.Arqsoft.QsMapper.Caching
+{
     ///<summary>
     /// Defines how cache should be updated.
     ///</summary>
-    public enum RefreshStrategy {
+    public enum RefreshStrategy
+    {
         ///<summary>
         /// Cache is updated on each call of Items property.
         ///</summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace Net.Arqsoft.QsMapper.Model {
+namespace Net.Arqsoft.QsMapper.Model
+{
     /// <summary>
     /// Base class for integer based tables.
     /// </summary>

@@ -5,17 +5,20 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-namespace Net.Arqsoft.QsMapper.Model {
+namespace Net.Arqsoft.QsMapper.Model
+{
     /// <summary>
     /// Base class for integer based tables.
     /// </summary>
     [Serializable]
-    public abstract class Entity<T> : IEntity<T> {
+    public abstract class Entity<T> : IEntity<T>
+    {
         /// <summary>
         /// Use Id as HashCode
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return EqualityComparer<T>.Default.GetHashCode(Id);
         }
 
@@ -30,9 +33,11 @@ namespace Net.Arqsoft.QsMapper.Model {
         /// <summary>
         /// Name (will be null if not contained in table).
         /// </summary>
-        public virtual string Name {
+        public virtual string Name
+        {
             get { return _name; }
-            set {
+            set
+            {
                 _name = value;
                 _findName = value?.ToLower();
             }
@@ -66,7 +71,8 @@ namespace Net.Arqsoft.QsMapper.Model {
         /// <param name="b1"></param>
         /// <param name="b2"></param>
         /// <returns></returns>
-        public static bool operator == (Entity<T> b1, Entity<T> b2) {
+        public static bool operator ==(Entity<T> b1, Entity<T> b2)
+        {
             return ReferenceEquals(null, b1) ? ReferenceEquals(null, b2) : b1.Equals(b2);
         }
 
@@ -76,7 +82,8 @@ namespace Net.Arqsoft.QsMapper.Model {
         /// <param name="b1"></param>
         /// <param name="b2"></param>
         /// <returns></returns>
-        public static bool operator != (Entity<T> b1, Entity<T> b2) {
+        public static bool operator !=(Entity<T> b1, Entity<T> b2)
+        {
             return ReferenceEquals(null, b1) ? !ReferenceEquals(null, b2) : !b1.Equals(b2);
         }
 
@@ -86,7 +93,8 @@ namespace Net.Arqsoft.QsMapper.Model {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(object obj) {
+        public override bool Equals(object obj)
+        {
             if (ReferenceEquals(null, obj)) return false;
             return ReferenceEquals(this, obj) || Equals(obj as Entity<T>);
         }
@@ -97,7 +105,8 @@ namespace Net.Arqsoft.QsMapper.Model {
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(Entity<T> other) {
+        public bool Equals(Entity<T> other)
+        {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             if (ReferenceEquals(other.Id, null)) return true;
@@ -109,7 +118,8 @@ namespace Net.Arqsoft.QsMapper.Model {
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public static bool NullOrNew(Entity<T> item) {
+        public static bool NullOrNew(Entity<T> item)
+        {
             return item == null || ReferenceEquals(item.Id, null) || Equals(item.Id, 0);
         }
 
@@ -117,7 +127,8 @@ namespace Net.Arqsoft.QsMapper.Model {
         /// Serialize this instance.
         /// </summary>
         /// <returns></returns>
-        public string Serialize() {
+        public string Serialize()
+        {
             var strm = new MemoryStream();
             var formatter = new BinaryFormatter();
             formatter.Serialize(strm, this);
@@ -133,12 +144,13 @@ namespace Net.Arqsoft.QsMapper.Model {
         /// <typeparam name="T1"></typeparam>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static T1 Create<T1>(string data) {
+        public static T1 Create<T1>(string data)
+        {
             var bytes = Encoding.UTF8.GetBytes(data);
             var strm = new MemoryStream(bytes);
             var formatter = new BinaryFormatter();
             var o = formatter.Deserialize(strm);
-            return (T1) o;
+            return (T1)o;
         }
 
         /// <summary>
@@ -146,8 +158,10 @@ namespace Net.Arqsoft.QsMapper.Model {
         /// </summary>
         /// <param name="item"></param>
         /// <typeparam name="T"></typeparam>
-        public void UpdateFrom(object item) {
-            foreach (var prop in GetType().GetProperties().Where(x => x.GetSetMethod() != null)) {
+        public void UpdateFrom(object item)
+        {
+            foreach (var prop in GetType().GetProperties().Where(x => x.GetSetMethod() != null))
+            {
                 var value = prop.GetValue(item);
                 prop.SetValue(this, value);
             }

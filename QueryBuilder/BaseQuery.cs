@@ -1,16 +1,15 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System;
+using System.Collections;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Data;
 using Net.Arqsoft.QsMapper.Model;
 
 namespace Net.Arqsoft.QsMapper.QueryBuilder
 {
-    using System.Collections.Generic;
-    using System;
-    using System.Collections;
-    using System.Data.SqlClient;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
-
     /// <summary>
     /// Common implementation for generic object queries.
     /// </summary>

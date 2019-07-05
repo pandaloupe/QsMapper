@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Net.Arqsoft.QsMapper.QueryBuilder {
+namespace Net.Arqsoft.QsMapper.QueryBuilder
+{
     /// <summary>
     /// Interface for building up database queries
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IQuery<T> where T : class, new() {
+    public interface IQuery<T> where T : class, new()
+    {
         /// <summary>
         /// Defines the table or view name to be used
         /// </summary>
