@@ -131,8 +131,8 @@ Please refer to **QueryBuilder.md** for more information.
 
     // with data output
     dao.Execute("Contacts.RetrieveCustomersByCityCodeRange")
-    	.WithParamter("FirstCityCode", "20000")
-	.WithParameter("LastCityCode", "29999")
+        .WithParamter("FirstCityCode", "20000")
+        .WithParameter("LastCityCode", "29999")
 	.AsListOf<Customer>();
 	
 Please refer to **CommandBuilder.md** for more information.
