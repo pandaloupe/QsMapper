@@ -64,7 +64,7 @@ The contained IGenericDao implementation may be constructed using a connection s
 
     var dao = new GenericDao("Data Source=.\SQLEXPRESS; Initial Catalog=QsSamples;Integrated Security=True");
 
-Please refer to Docs/GenericDao.md for more information.
+Please refer to **GenericDao.md** for more information.
 
 # Basic operations
 
@@ -113,7 +113,28 @@ Please refer to Docs/GenericDao.md for more information.
        .OrderBy("Name")
        .ToList();
        
-Please refer to Docs/QueryBuilder.md for more information.
+Please refer to **QueryBuilder/README.md** for more information.
+
+## Calling stored procedures
+
+    // without return value
+    dao.Execute("Booking.CreateSchedule")
+      .WithParameter("Year", 2020)
+      .AsVoid();
+      
+    // with return value
+    dao.Execute("Sales.CreateJournal")
+      .WithParameter("UserName", CurrentUser.Name)
+      .WithParameter("Time", DateTime.Now)
+      .AsFunction();
+
+    // with data output
+    dao.Execute("Contacts.RetrieveCustomersByCityCodeRange")
+    	.WithParamter("FirstCityCode", "20000")
+	.WithParameter("LastCityCode", "29999")
+	.AsListOf<Customer>();
+	
+Please refer to **CommandBuilder/README.md** for more information.
 
 # Mapping declarations
 
@@ -129,4 +150,4 @@ Data relations and behaviour of the framework may be defined in a custom catalog
        }
     }
     
-Please refer to Docs/Catalog.md for more information.
+Please refer to **Catalog.md** for more information.
