@@ -102,7 +102,7 @@ query = query.OrderBy("Fieldname").Ascending
 The query is built, concluded and excuted using one of these methods.
 
 Method | Description
---------------------
+------ | -----------
 IList<T> ToList() | Returns a typed list using the type parameter used in the **Query<T>()** method.	
 IList<T> ToExtendedList() |	Loops through 1:n and m:n relations as defined in the catalog (cf. Catalog.md) and fills the respectice collections on each returned object.
 IList<T1> ToListOf<T1>() |	Returns a list of type T1 (T1 must derive from T).
