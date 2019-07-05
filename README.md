@@ -3,19 +3,20 @@ Conventional .Net SQL entity mapping framework.
 
 QsMapper provides a Linq-like fluent syntax for database operations on MSSQL Server databases.
 
-    var dao = new GenericDao();
-    var result = dao.Query()  
+    var dao = new GenericDao(connectionString);
+    var result = dao.Query<Customer>()  
        .Where(x => x.Field("FirstName").IsEqualTo("John"))  
        .And(x => x.Field("LastName").IsLike("Do%"))  
        .OrderBy("LastName")  
        .ThenBy("FrstName")  
        .ToList();
 
-Providers for other databases may be developed based on the framework's interface definitions.
+A basic dao implementation for MSSQL databases is provided in this project. 
+Implementations for other databases may be developed based on the framework's interface definitions.
 
 # Conventions
 
-## Table names
+## Table and field names
 
 By default QsMapper makes use of sql database schemes.
 
@@ -40,6 +41,7 @@ By default QsMapper makes use of sql database schemes.
     go
 
 The corresponding Class should reside in a folder/namespace named 'Contacts' and the class name itself woule be 'Customer'.
+Property names are mapped by convention of identical names (case sensitive).
 
     using Net.Arqsoft.QsMapper.Model; 
     
@@ -53,3 +55,78 @@ The corresponding Class should reside in a folder/namespace named 'Contacts' and
           public DateTime? Birthday { get; set; } // may be null, so ? is recommended but optional
        }
     }
+
+# Setup
+
+The contained IGenericDao implementation may be constructed using a connection string like so.
+
+    var dao = new GenericDao("Data Source=.\SQLEXPRESS; Initial Catalog=QsSamples;Integrated Security=True");
+
+Please refer to Docs/GenericDao.md for more information.
+
+# Basic operations
+
+## Creating and updating objects
+
+    //create
+    
+    var customer = new Customer
+    {
+    	Salutation = "Mr",
+	FirstName = "John",
+	LastName = "Doe"
+    };
+    
+    dao.Save(customer);
+    
+    // Id will be updated during save so it can be requested immediately after (if your column is declared as identity of course)
+    
+    var generatedId = customer.Id;
+    
+    // update
+    
+    customer.Birthday = new DateTime(1985, 10, 3);
+    
+    dao.Save(customer);
+    
+## Retrieving single objects by id
+
+    var customer = dao.Get<Customer>(1);
+    
+## Deleting objects
+
+   // by id
+   
+   dao.Delete<Customer>(1);
+	
+  // by object
+  
+  dao.Delete(customer);
+
+
+    var allCustomers = dao.Query<Customer>().ToList();
+
+## Querying objects
+
+    var customers = dao.Query<Customer>()
+       .Where(x => x.Field("Salutation").IsEqualTo("Mr")
+       .OrderBy("Name")
+       .ToList();
+       
+Please refer to Docs/QueryBuilder.md for more information.
+
+# Mapping declarations
+
+Data relations and behaviour of the framework may be defined in a custom catalog definition.
+
+    public class SampleCatalog : Catalog
+    {
+       public SampleCatalog() 
+       {
+          RegisterMap<Quote>()
+	     .QueryWithView("Sales.QuotesQuery")
+	     .WithMany<QuoteItem>();
+       }
+    }
+    
+Please refer to Docs/Catalog.md for more information.
