@@ -1,7 +1,7 @@
 # QsMapper
 Conventional .Net SQL entity mapping framework.
 
-QsMapper provides a Linq-like fluent syntax for database operations on MSSQL Server databases.
+QsMapper provides a Linq-like fluent syntax for database operations on (MS)SQL Server databases.
 
     var dao = new GenericDao(connectionString);
     var result = dao.Query<Customer>()  
@@ -12,7 +12,7 @@ QsMapper provides a Linq-like fluent syntax for database operations on MSSQL Ser
        .ToList();
 
 A basic dao implementation for MSSQL databases is provided in this project. 
-Implementations for other databases may be developed based on the framework's interface definitions.
+Implementations for other relational database management systems may be developed based on the framework's interface definitions.
 
 # Conventions
 
