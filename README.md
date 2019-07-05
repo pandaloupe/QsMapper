@@ -7,10 +7,11 @@ QsMapper provides a Linq-like fluent syntax for database operations on (MS)SQL S
        .Where(x => x.Field("FirstName").IsEqualTo("John"))  
        .And(x => x.Field("LastName").IsLike("Do%"))  
        .OrderBy("LastName")  
-       .ThenBy("FrstName")  
+       .ThenBy("FirstName")  
        .ToList();
 
 A basic dao implementation for MSSQL databases is provided in this project. 
+
 Implementations for other relational database management systems may be developed based on the framework's interface definitions.
 
 # Conventions
@@ -40,7 +41,7 @@ By default QsMapper makes use of sql database schemes.
     )
     go
 
-The corresponding Class should reside in a folder/namespace named **Contacts** and the class name itself woule be **Customer**.
+The corresponding Class should reside in a folder/namespace named **Contacts** and the class name itself would be **Customer**.
 
 Property names are mapped by the convention of identical names (case sensitive).
 
@@ -113,7 +114,7 @@ Please refer to **GenericDao.md** for more information.
        .OrderBy("Name")
        .ToList();
        
-Please refer to **QueryBuilder/README.md** for more information.
+Please refer to **QueryBuilder.md** for more information.
 
 ## Calling stored procedures
 
@@ -134,7 +135,7 @@ Please refer to **QueryBuilder/README.md** for more information.
 	.WithParameter("LastCityCode", "29999")
 	.AsListOf<Customer>();
 	
-Please refer to **CommandBuilder/README.md** for more information.
+Please refer to **CommandBuilder.md** for more information.
 
 # Mapping declarations
 
