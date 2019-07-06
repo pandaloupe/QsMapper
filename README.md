@@ -1,6 +1,8 @@
 # QsMapper
 Conventional .Net SQL entity mapping framework.
 
+*Keywords: ORM, Entity Mapper, Entity Framework, Object Mapper, Class Mapper, Database Mapper*
+
 QsMapper provides a Linq-like fluent syntax for database operations on (MS)SQL Server databases.
 
 ```csharp
