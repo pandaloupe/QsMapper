@@ -47,7 +47,7 @@ As table names in sql are supposed to be in plural and class names in .Net in si
 
 So the class *Net.Arqsoft.QsMapper.Samples.Model.Contacts.Customer* maps to the table *Contacts.Customers*.
 
-The default plural is built by simply adding a 's' to the class name. 
+The default plural is built by simply adding an 's' to the class name. 
 
 Exceptions known to the framework are:
 
@@ -103,7 +103,7 @@ So the convention for this is:
 
 **Parent property names are mapped to table fields of the same name appended with 'Id'.**
 
-In this constellation a customer returned by **Dao.Get<Customer>(n);** would have AccountManager set to null if AccountManagerId is null in the database. Else AccountManager will by an object of type *Employee* with it's Id set to the value of *AccountManagerId'.
+In this constellation a customer returned by **Dao.Get<Customer>(n);** would have *AccountManager* set to null if *AccountManagerId* is null in the database. Else AccountManager will by an object of type *Employee* with it's Id set to the value of *AccountManagerId*.
 
 Other properties of the parent object may be set and mapped using database views or queries having fieldnames containing a dot.
 
@@ -113,7 +113,16 @@ from Contacts.Customers c
 left join Sales.Employees e on e.Id = c.AccountManagerId
 ```
 
-The mapper now would set the AccountManager.Name property according to the value returnend from the database.
+The mapper now would set the 'AccountManager.Name' property according to the value returnend from the database.
+
+Nested properties may be set by concatenating the name parts accordingly.
+
+```tsql
+select c.*, e.Name as 'AccountManager.Name', u.Name as 'AccountManager.BusinessUnit.Name'
+from Contacts.Customers c
+left join Sales.Employees e on e.Id = c.AccountManagerId
+left join Sales.BusinessUnits u on u.Id = e.BusinessUnitId
+```
 
 
 
