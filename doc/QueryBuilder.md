@@ -62,8 +62,8 @@ query = query.Where(x => x.Field("Fieldname").ConditionMethod()
 
 The above mentioned **ConditionMethods** may be one of the following operator methods.
 
-QsMapper |	SQL
----------|----
+QsMapper |	T-SQL
+---------|------
 IsEqualTo(object value)	| = value
 IsGreaterThan(object value)	| > value
 IsGreaterOrEqual(object value) |	>= value
