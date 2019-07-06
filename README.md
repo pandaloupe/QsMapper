@@ -3,7 +3,9 @@ Conventional .Net SQL entity mapping framework.
 
 *Keywords: ORM, Entity Mapper, Entity Framework, Object Mapper, Class Mapper, Database Mapper*
 
-QsMapper provides a Linq-like fluent syntax for database operations on (MS)SQL Server databases.
+QsMapper is an easy to use zero configuration mapping framework using simple naming conventions to map sql based data into .Net objects and vice versa.
+
+The framework provides a Linq-like fluent syntax for database operations on (MS)SQL Server databases.
 
 ```csharp
 var result = dao.Query<Customer>()  
