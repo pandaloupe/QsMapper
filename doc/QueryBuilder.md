@@ -55,7 +55,7 @@ var query = query.Where(x => x.Field("Fieldname").ConditionMethod())
 
 ```csharp
 query = query.Where(x => x.Field("Fieldname").ConditionMethod()
- 	.Or(y => y.Field("Fieldname2").ConditionOperator()));
+ 	.Or(y => y.Field("Fieldname2").ConditionMethod()));
 ```
 
 ## Comparison operators
