@@ -65,6 +65,9 @@ namespace Net.Arqsoft.QsMapper.Examples.Model.Contacts
 }
 ```
 
+Please refer to [**docs/Conventions.md**](https://github.com/pandaloupe/QsMapper/blob/master/doc/Conventions.md) for more information on the framework's naming conventions.
+
+
 # Setup
 
 The contained IGenericDao implementation may be constructed using a connection string like so.
@@ -129,7 +132,7 @@ var customers = dao.Query<Customer>()
    .ToList();
 ```
 
-Please refer to **QueryBuilder.md** for more information.
+Please refer to [**docs/QueryBuilder.md**](https://github.com/pandaloupe/QsMapper/blob/master/doc/QueryBuilder.md) for more information.
 
 ## Calling stored procedures
 
