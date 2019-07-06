@@ -27,9 +27,9 @@ create schema Billing
 To represent these schemes in C# (or .Net in general) you divide your model namespace using subfolders in your project:
 
 - Model
--- Contacts
--- Sales
--- Billing
+   - Contacts
+   - Sales
+   - Billing
 
 The mapper evaluates the entity class name and assumes the last namespace part before the class name being the schema.
 
