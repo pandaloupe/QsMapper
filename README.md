@@ -12,7 +12,7 @@ var result = dao.Query<Customer>()
    .ToList();
 ```
 
-A basic dao implementation for MSSQL databases is provided in this project. 
+A basic dao implementation for MSSQL databases is provided with the project. 
 
 Implementations for other relational database management systems may be developed based on the framework's interface definitions.
 
