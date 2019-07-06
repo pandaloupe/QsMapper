@@ -277,11 +277,7 @@ namespace Net.Arqsoft.QsMapper
                     }
                     else
                     {
-                        var fields = new List<string>();
-                        for (var i = 0; i < reader.FieldCount; i++)
-                        {
-                            fields.Add(reader.GetName(i));
-                        }
+                        var info = new TableInfo(reader);
                         reader.Close();
 
                         var update = "update " + map.FullTableName;
@@ -289,14 +285,18 @@ namespace Net.Arqsoft.QsMapper
 
                         var cmd = GetSqlCommand();
 
-                        foreach (var field in fields)
+                        foreach (var field in info.WriteableFields)
                         {
                             if (!AddParameter(cmd, field, item, map))
+                            {
                                 continue;
+                            }
+
                             setters.Add(string.Format("[{0}]=@{0}", field));
                         }
-                        update += "\nset " + string.Join(",\n  ", setters.ToArray())
-                                  + "\nwhere " + map.GetKeyCondition();
+                        update += "\nset " 
+                                + string.Join(",\n  ", setters.ToArray())
+                                + "\nwhere " + map.GetKeyCondition();
 
                         cmd.CommandText = update;
                         map.AddKeyParams(cmd, item);
@@ -425,21 +425,14 @@ namespace Net.Arqsoft.QsMapper
             var query = GetSqlCommand(queryText);
             using (var reader = query.ExecuteReader())
             {
-                reader.Read();
-                var fields = new List<string>();
-                for (var i = 0; i < reader.FieldCount; i++)
-                {
-                    var field = reader.GetName(i);
-                    fields.Add(field);
-                }
-
+                var info = new TableInfo(reader);
                 reader.Close();
 
                 var cmd = GetSqlCommand();
 
                 // use only fields that aren't readonly
                 var columns = new List<string>();
-                foreach (var field in fields)
+                foreach (var field in info.WriteableFields)
                 {
                     if (!AddParameter(cmd, field, item, map))
                     {
@@ -458,18 +451,18 @@ namespace Net.Arqsoft.QsMapper
                 CommandDebugger.Debug(cmd);
 
                 var identity = cmd.ExecuteScalar();
-                if (identity is int)
+                if (identity is int id)
                 {
                     var baseItem = item as IntegerBasedEntity;
                     if (baseItem != null)
                     {
-                        baseItem.Id = (int)identity;
+                        baseItem.Id = id;
                     }
                     else
                     {
                         var key = map.KeyFields[0];
                         var prop = item.GetType().GetProperty(key);
-                        prop.SetValue(item, (int)identity, null);
+                        prop.SetValue(item, id, null);
                     }
                 }
             }

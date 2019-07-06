@@ -70,7 +70,7 @@ namespace Net.Arqsoft.QsMapper.Examples.Model.Contacts
 The contained IGenericDao implementation may be constructed using a connection string like so.
 
 ```csharp
-var dao = new GenericDao("Data Source=.\SQLEXPRESS; Initial Catalog=QsSamples;Integrated Security=True");
+var dao = new GenericDao(@"Data Source=.\SQLEXPRESS; Initial Catalog=QsSamples;Integrated Security=True");
 ```
 
 Please refer to **GenericDao.md** for more information.

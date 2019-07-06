@@ -22,8 +22,6 @@ namespace Net.Arqsoft.QsMapper
         /// <returns></returns>
         public T Map(IDataReader data)
         {
-            var idColumn = GetIdColumn(data);
-            var id = GetIdValue(data, idColumn);
             var o = new T();
 
             Map(o, data);
@@ -37,57 +35,10 @@ namespace Net.Arqsoft.QsMapper
         /// <returns></returns>
         public T Map(DataRow row)
         {
-            var id = row["Id"];
             var o = new T();
 
             Map(o, row);
             return o;
-        }
-
-        private static int GetIdValue(IDataRecord data, int idColumn)
-        {
-            if (idColumn < 0)
-            {
-                return 0;
-            }
-
-            var type = data.GetFieldType(idColumn);
-
-            if (type == typeof(int))
-            {
-                return data.GetInt32(idColumn);
-            }
-
-            if (type == typeof(long))
-            {
-                return (int)data.GetInt64(idColumn);
-            }
-
-            if (type == typeof(short))
-            {
-                return data.GetInt16(idColumn);
-            }
-
-            if (type == typeof(byte))
-            {
-                return data.GetByte(idColumn);
-            }
-
-            // not convertible
-            throw new Exception("Id is not convertible to int");
-        }
-
-        private static int GetIdColumn(IDataRecord data)
-        {
-            for (var i = 0; i < data.FieldCount; i++)
-            {
-                if (data.GetName(i) == "Id")
-                {
-                    return i;
-                }
-            }
-
-            return -1;
         }
 
         /// <summary>

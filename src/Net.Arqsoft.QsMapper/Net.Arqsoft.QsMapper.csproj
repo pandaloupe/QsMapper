@@ -94,6 +94,8 @@
     <Compile Include="QueryBuilder\QueryParameter.cs" />
     <Compile Include="QueryBuilder\BaseQuery.cs" />
     <Compile Include="QueryBuilder\RangePart.cs" />
+    <Compile Include="Util\TableColumn.cs" />
+    <Compile Include="Util\TableInfo.cs" />
     <Compile Include="TableMap.cs" />
     <Compile Include="Util\ExpressionHelper.cs" />
   </ItemGroup>

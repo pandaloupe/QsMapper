@@ -52,7 +52,7 @@ namespace Net.Arqsoft.QsMapper
             var type = typeof(T);
             if (!_propertyMappers.ContainsKey(type))
             {
-                var mapper = new PropertyMapper<T>(this);
+                var mapper = new PropertyMapper<T>();
                 _propertyMappers.Add(type, mapper);
                 return mapper;
             }
