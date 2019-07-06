@@ -69,7 +69,7 @@ namespace Net.Arqsoft.QsMapper.Examples.Model.Contacts
 }
 ```
 
-Please refer to [**docs/Conventions.md**](https://github.com/pandaloupe/QsMapper/blob/master/doc/Conventions.md) for more information on the framework's naming conventions.
+Please refer to [doc/Conventions.md](doc/Conventions.md) for more information on the framework's naming conventions.
 
 
 # Setup
@@ -80,7 +80,7 @@ The contained IGenericDao implementation may be constructed using a connection s
 var dao = new GenericDao(@"Data Source=.\SQLEXPRESS; Initial Catalog=QsSamples;Integrated Security=True");
 ```
 
-Please refer to **GenericDao.md** for more information.
+Please refer to **GenericDao.md** (TODO) for more information.
 
 # Basic operations
 
@@ -136,7 +136,7 @@ var customers = dao.Query<Customer>()
    .ToList();
 ```
 
-Please refer to [**docs/QueryBuilder.md**](https://github.com/pandaloupe/QsMapper/blob/master/doc/QueryBuilder.md) for more information.
+Please refer to [doc/QueryBuilder.md](doc/QueryBuilder.md) for more information.
 
 ## Calling stored procedures
 
@@ -159,7 +159,7 @@ dao.Execute("Contacts.RetrieveCustomersByCityCode")
     .AsListOf<Customer>();
 ```
 
-Please refer to **CommandBuilder.md** for more information.
+Please refer to **CommandBuilder.md** (TODO) for more information.
 
 # Mapping declarations
 
@@ -177,4 +177,4 @@ public class SampleCatalog : Catalog
 }
 ```
 
-Please refer to **Catalog.md** for more information.
+Please refer to **Catalog.md** (TODO) for more information.
