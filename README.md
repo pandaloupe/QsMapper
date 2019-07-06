@@ -152,7 +152,7 @@ dao.Execute("Sales.CreateJournal")
 
 // with data output
 dao.Execute("Contacts.RetrieveCustomersByCityCode")
-    .WithParamter("FirstCityCode", "20000")
+    .WithParameter("FirstCityCode", "20000")
     .WithParameter("LastCityCode", "29999")
     .AsListOf<Customer>();
 ```
