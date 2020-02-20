@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Data;
+
 using Net.Arqsoft.QsMapper.Model;
 
 namespace Net.Arqsoft.QsMapper.QueryBuilder
@@ -221,7 +222,11 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         }
         private void AddQueryParameter(QueryParameter param)
         {
-            if (QueryParameters == null) QueryParameters = new List<QueryParameter>();
+            if (QueryParameters == null)
+            {
+                QueryParameters = new List<QueryParameter>();
+            }
+
             QueryParameters.Add(param);
         }
 
@@ -248,8 +253,10 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         /// <returns></returns>
         public virtual IList<T> ToList()
         {
-            var cmd = GetQueryCommand();
-            return GetFindResult(cmd);
+            using (var cmd = GetQueryCommand())
+            {
+                return GetFindResult(cmd);
+            }
         }
 
         /// <inheritdoc />
@@ -259,10 +266,11 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         /// <returns></returns>
         public virtual IList<T1> ToListOf<T1>() where T1 : class
         {
-            var cmd = GetQueryCommand();
-            var result = GetFindResult(cmd);
-            return result.Select(x => x as T1)
-                .ToList();
+            using (var cmd = GetQueryCommand())
+            {
+                var result = GetFindResult(cmd);
+                return result.Select(x => x as T1).ToList();
+            }
         }
 
         /// <summary>
@@ -288,23 +296,25 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         /// <returns></returns>
         public virtual int Count()
         {
-            var cmd = Dao.GetSqlCommand();
-            var queryText = GetCountQuery();
-            if (QueryParameters.Count > 0)
+            using (var cmd = Dao.GetSqlCommand())
             {
-                var condition = GetConditionString(cmd);
-                queryText += "\nwhere " + condition;
-            }
+                var queryText = GetCountQuery();
+                if (QueryParameters.Count > 0)
+                {
+                    var condition = GetConditionString(cmd);
+                    queryText += "\nwhere " + condition;
+                }
 
-            queryText += GetOrderByClause();
-            CommandDebugger.Debug(cmd);
-            cmd.CommandText = queryText;
-            using (var reader = cmd.ExecuteReader())
-            {
-                reader.Read();
-                var result = reader.GetInt32(0);
-                reader.Close();
-                return result;
+                queryText += GetOrderByClause();
+                CommandDebugger.Debug(cmd);
+                cmd.CommandText = queryText;
+                using (var reader = cmd.ExecuteReader())
+                {
+                    reader.Read();
+                    var result = reader.GetInt32(0);
+                    reader.Close();
+                    return result;
+                }
             }
         }
 
@@ -324,23 +334,25 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         /// <returns></returns>
         public virtual T FirstOrDefault()
         {
-            var cmd = Dao.GetSqlCommand();
-            var queryText = GetShortQuery().Replace("select ", "select top 1 ");
-            if (QueryParameters.Count > 0)
+            using (var cmd = Dao.GetSqlCommand())
             {
-                var condition = GetConditionString(cmd);
-                queryText += "\nwhere " + condition;
-            }
+                var queryText = GetShortQuery().Replace("select ", "select top 1 ");
+                if (QueryParameters.Count > 0)
+                {
+                    var condition = GetConditionString(cmd);
+                    queryText += "\nwhere " + condition;
+                }
 
-            if (OrderParameters.Count > 0)
-            {
-                queryText += GetOrderByClause();
-            }
+                if (OrderParameters.Count > 0)
+                {
+                    queryText += GetOrderByClause();
+                }
 
-            cmd.CommandText = queryText;
-            CommandDebugger.Debug(cmd);
-            var queryResult = GetFindResult(cmd);
-            return queryResult.Count > 0 ? queryResult.First() : null;
+                cmd.CommandText = queryText;
+                CommandDebugger.Debug(cmd);
+                var queryResult = GetFindResult(cmd);
+                return queryResult.Count > 0 ? queryResult.First() : null;
+            }
         }
 
         /// <summary>

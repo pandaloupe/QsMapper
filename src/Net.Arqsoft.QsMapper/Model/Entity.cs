@@ -35,7 +35,7 @@ namespace Net.Arqsoft.QsMapper.Model
         /// </summary>
         public virtual string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 _name = value;
@@ -96,7 +96,15 @@ namespace Net.Arqsoft.QsMapper.Model
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return ReferenceEquals(this, obj) || Equals(obj as Entity<T>);
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() == GetType()
+                || obj.GetType().IsAssignableFrom(GetType())
+                || GetType().IsInstanceOfType(obj))
+            {
+                return Equals(obj as Entity<T>);
+            }
+
+            return false;
         }
 
         /// <summary>

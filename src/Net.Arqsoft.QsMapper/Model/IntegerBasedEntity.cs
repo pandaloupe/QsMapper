@@ -10,6 +10,5 @@ namespace Net.Arqsoft.QsMapper.Model
     {
         /// <inheritdoc />
         public override bool IsNew => Id == 0;
-
     }
 }

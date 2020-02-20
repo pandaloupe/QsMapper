@@ -6,9 +6,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
+using log4net;
+
 using Net.Arqsoft.QsMapper.CommandBuilder;
 using Net.Arqsoft.QsMapper.Model;
 using Net.Arqsoft.QsMapper.QueryBuilder;
+
 using CommandType = System.Data.CommandType;
 
 namespace Net.Arqsoft.QsMapper
@@ -22,6 +25,8 @@ namespace Net.Arqsoft.QsMapper
         public delegate SqlConnection GetConnectionDelegate();
 
         private readonly GetConnectionDelegate _getConnection;
+
+        private readonly ILog _log = LogManager.GetLogger(typeof(GenericDao));
 
         public ICatalog Catalog { get; set; }
 
@@ -102,14 +107,31 @@ namespace Net.Arqsoft.QsMapper
             _sqlConnection = null;
         }
 
-        private SqlConnection SqlConnection
-        {
-            get
-            {
-                OpenConnection();
-                return _sqlConnection;
-            }
-        }
+        //private SqlConnection SqlConnection
+        //{
+        //    get
+        //    {
+        //        OpenConnection();
+        //        return _sqlConnection;
+        //    }
+        //}
+
+        //public SqlConnection OpenConnection()
+        //{
+        //    if (_transaction != null)
+        //    {
+        //        return _transaction.Connection;
+        //    }
+
+        //    return _getConnection();
+        //}
+
+        //public void CloseConnection()
+        //{
+            
+        //}
+
+        private SqlConnection SqlConnection => OpenConnection();
 
         public DateTime GetCurrentDate()
         {
@@ -172,7 +194,10 @@ namespace Net.Arqsoft.QsMapper
         {
             var cmd = new SqlCommand { Connection = SqlConnection };
             if (_transaction != null)
+            {
                 cmd.Transaction = _transaction;
+            }
+
             return cmd;
         }
 
@@ -251,6 +276,7 @@ namespace Net.Arqsoft.QsMapper
 
         public void Save<T>(T item) where T : class, new()
         {
+
             Save<T>((object)item);
         }
 
@@ -264,6 +290,11 @@ namespace Net.Arqsoft.QsMapper
             }
             else
             {
+                if (_log.IsDebugEnabled)
+                {
+                    _log.Debug("--begin update--");
+                }
+
                 var map = Catalog.GetTableMap<T>();
                 var queryText = "select * from " + map.FullTableName + "\nwhere " + map.GetKeyCondition();
                 var query = GetSqlCommand(queryText);
@@ -277,33 +308,38 @@ namespace Net.Arqsoft.QsMapper
                     }
                     else
                     {
-                        var info = new TableInfo(reader);
+                        var fields = new List<string>();
+                        for (var i = 0; i < reader.FieldCount; i++)
+                        {
+                            fields.Add(reader.GetName(i));
+                        }
                         reader.Close();
 
                         var update = "update " + map.FullTableName;
                         var setters = new List<string>();
 
-                        var cmd = GetSqlCommand();
-
-                        foreach (var field in info.WriteableFields)
+                        using (var cmd = GetSqlCommand())
                         {
-                            if (!AddParameter(cmd, field, item, map))
+
+                            foreach (var field in fields)
                             {
-                                continue;
+                                if (!AddParameter(cmd, field, item, map))
+                                {
+                                    continue;
+                                }
+
+                                setters.Add(string.Format("[{0}]=@{0}", field));
                             }
+                            update += "\nset " + string.Join(",\n  ", setters.ToArray())
+                                      + "\nwhere " + map.GetKeyCondition();
 
-                            setters.Add(string.Format("[{0}]=@{0}", field));
+                            cmd.CommandText = update;
+                            map.AddKeyParams(cmd, item);
+
+                            CommandDebugger.Debug(cmd);
+
+                            cmd.ExecuteNonQuery();
                         }
-                        update += "\nset " 
-                                + string.Join(",\n  ", setters.ToArray())
-                                + "\nwhere " + map.GetKeyCondition();
-
-                        cmd.CommandText = update;
-                        map.AddKeyParams(cmd, item);
-
-                        CommandDebugger.Debug(cmd);
-
-                        cmd.ExecuteNonQuery();
                     }
                 }
             }
@@ -396,12 +432,14 @@ namespace Net.Arqsoft.QsMapper
         public void CommitTransaction()
         {
             _transaction.Commit();
+            _transaction.Dispose();
             _transaction = null;
         }
 
         public void RollbackTransaction()
         {
             _transaction.Rollback();
+            _transaction.Dispose();
             _transaction = null;
         }
 
@@ -425,44 +463,53 @@ namespace Net.Arqsoft.QsMapper
             var query = GetSqlCommand(queryText);
             using (var reader = query.ExecuteReader())
             {
-                var info = new TableInfo(reader);
-                reader.Close();
-
-                var cmd = GetSqlCommand();
-
-                // use only fields that aren't readonly
-                var columns = new List<string>();
-                foreach (var field in info.WriteableFields)
+                reader.Read();
+                var fields = new List<string>();
+                for (var i = 0; i < reader.FieldCount; i++)
                 {
-                    if (!AddParameter(cmd, field, item, map))
-                    {
-                        continue;
-                    }
-
-                    columns.Add(field);
+                    var field = reader.GetName(i);
+                    fields.Add(field);
                 }
 
-                insert += " ( " + string.Join(",\n  ", columns.Select(x => "[" + x + "]")) + ")"
-                          + "\nvalues (" + string.Join(",\n  ", columns.Select(x => "@" + x)) + ");"
-                          + "select cast(scope_identity() as int);";
+                reader.Close();
 
-                cmd.CommandText = insert;
-
-                CommandDebugger.Debug(cmd);
-
-                var identity = cmd.ExecuteScalar();
-                if (identity is int id)
+                using (var cmd = GetSqlCommand())
                 {
-                    var baseItem = item as IntegerBasedEntity;
-                    if (baseItem != null)
+
+                    // use only fields that aren't readonly
+                    var columns = new List<string>();
+                    foreach (var field in fields)
                     {
-                        baseItem.Id = id;
+                        if (!AddParameter(cmd, field, item, map))
+                        {
+                            continue;
+                        }
+
+                        columns.Add(field);
                     }
-                    else
+
+                    insert += " ( " + string.Join(",\n  ", columns.Select(x => "[" + x + "]")) + ")"
+                              + "\nvalues (" + string.Join(",\n  ", columns.Select(x => "@" + x)) + ");"
+                              + "select cast(scope_identity() as int);";
+
+                    cmd.CommandText = insert;
+
+                    CommandDebugger.Debug(cmd);
+
+                    var identity = cmd.ExecuteScalar();
+                    if (identity is int)
                     {
-                        var key = map.KeyFields[0];
-                        var prop = item.GetType().GetProperty(key);
-                        prop.SetValue(item, id, null);
+                        var baseItem = item as IntegerBasedEntity;
+                        if (baseItem != null)
+                        {
+                            baseItem.Id = (int) identity;
+                        }
+                        else
+                        {
+                            var key = map.KeyFields[0];
+                            var prop = item.GetType().GetProperty(key);
+                            prop.SetValue(item, (int) identity, null);
+                        }
                     }
                 }
             }
@@ -501,13 +548,14 @@ namespace Net.Arqsoft.QsMapper
             else if (prop != null)
             {
                 var param = cmd.Parameters.AddWithValue(field, prop.GetValue(item, null) ?? DBNull.Value);
-                if (param.Value == DBNull.Value)
+                if (param.Value == DBNull.Value || param.Value is string strVal && string.IsNullOrEmpty(strVal))
                 {
                     if (prop.PropertyType == typeof(byte[]))
                     {
                         param.SqlDbType = SqlDbType.Binary;
                     }
                 }
+
                 return true;
             }
             else if (field.EndsWith("Id"))
@@ -553,63 +601,73 @@ namespace Net.Arqsoft.QsMapper
         {
             // if no table name is set this is considered a read only collection
             if (collection.TableName == null)
+            {
                 return;
+            }
+
             var newStateType = newState.GetType();
             var newStateProp = newStateType.GetProperty(collection.PropertyName);
             if (newStateProp == null)
+            {
                 return;
+            }
+
             var newCollection = newStateProp.GetValue(newState, null) as IEnumerable<object>;
             // only update collections that are present on newState object
             // => prevent deletion if incomplete object is saved
             if (newCollection == null)
+            {
                 return;
+            }
 
-            // get generic mthod infos for saving child objects
+            // get generic method infos for saving child objects
             var delete = GetMethod("Delete", collection.ChildType);
             var save = GetMethod("Save", collection.ChildType);
 
-            if (oldState != null)
+            if (oldState == null)
             {
-                // compare with old state for updates, deletes and inserts
-                var oldStateType = oldState.GetType();
-                var oldStateProp = oldStateType.GetProperty(collection.PropertyName);
-                var oldCollection = oldStateProp.GetValue(oldState, null) as IEnumerable<object>;
-                if (oldCollection != null)
-                {
-                    // process deletes
-                    foreach (var d in oldCollection.Where(x => !newCollection.Contains(x)))
-                    {
-                        // delete d from database    
-                        var oldBase = d as IntegerBasedEntity;
-                        if (oldBase != null && oldBase.Id == 0)
-                            continue;
+                return;
+            }
 
-                        delete.Invoke(this, new[] { d });
-                    }
-                    // process updates
-                    foreach (var u in newCollection.Where(x => oldCollection.Contains(x)))
-                    {
-                        var oldItem = oldCollection.First(x => x.Equals(u));
-                        if (!HasChanges(u, oldItem))
-                            continue;
-                        // update u
-                        save.Invoke(this, new[] { u });
-                    }
-                    // process inserts
-                    foreach (var i in newCollection.Where(x => !oldCollection.Contains(x)))
-                    {
-                        // insert i
-                        save.Invoke(this, new[] { i });
-                    }
-                }
-                else
+            // compare with old state for updates, deletes and inserts
+            var oldStateType = oldState.GetType();
+            var oldStateProp = oldStateType.GetProperty(collection.PropertyName);
+            var oldCollection = oldStateProp.GetValue(oldState, null) as IEnumerable<object>;
+            if (oldCollection != null)
+            {
+                // process deletes
+                foreach (var d in oldCollection.Where(x => !newCollection.Contains(x)))
                 {
-                    // inserts all items
-                    foreach (var i in newCollection)
-                    {
-                        // insert i
-                        save.Invoke(this, new[] { i });
-                    }
+                    // delete d from database    
+                    var oldBase = d as IntegerBasedEntity;
+                    if (oldBase != null && oldBase.Id == 0)
+                        continue;
+
+                    delete.Invoke(this, new[] { d });
+                }
+                // process updates
+                foreach (var u in newCollection.Where(x => oldCollection.Contains(x)))
+                {
+                    var oldItem = oldCollection.First(x => x.Equals(u));
+                    if (!HasChanges(u, oldItem))
+                        continue;
+                    // update u
+                    save.Invoke(this, new[] { u });
+                }
+                // process inserts
+                foreach (var i in newCollection.Where(x => !oldCollection.Contains(x)))
+                {
+                    // insert i
+                    save.Invoke(this, new[] { i });
+                }
+            }
+            else
+            {
+                // inserts all items
+                foreach (var i in newCollection)
+                {
+                    // insert i
+                    save.Invoke(this, new[] { i });
                 }
             }
         }
@@ -665,31 +723,36 @@ namespace Net.Arqsoft.QsMapper
         private void InsertManyToManyRelation(ChildCollection collection, object newState, object linkedObject,
             string typeName)
         {
-            var cmd = GetSqlCommand();
-            var masterField = collection.MasterFieldName ?? $"{typeName}Id";
-            var childField = collection.ChildFieldName ?? $"{linkedObject.GetType().Name}Id";
-            cmd.CommandText = $"insert into {collection.TableName} ([{masterField}], [{childField}]) values (@p1, @p2)";
-            var id1Property = newState.GetType().GetProperty(collection.MasterPropertyName ?? "Id");
-            var id2Property = linkedObject.GetType().GetProperty(collection.ChildPropertyName ?? "Id");
-            cmd.Parameters.AddWithValue("p1", id1Property.GetValue(newState, null));
-            cmd.Parameters.AddWithValue("p2", id2Property.GetValue(linkedObject, null));
-            CommandDebugger.Debug(cmd);
-            cmd.ExecuteNonQuery();
+            using (var cmd = GetSqlCommand())
+            {
+                var masterField = collection.MasterFieldName ?? $"{typeName}Id";
+                var childField = collection.ChildFieldName ?? $"{linkedObject.GetType().Name}Id";
+                cmd.CommandText =
+                    $"insert into {collection.TableName} ([{masterField}], [{childField}]) values (@p1, @p2)";
+                var id1Property = newState.GetType().GetProperty(collection.MasterPropertyName ?? "Id");
+                var id2Property = linkedObject.GetType().GetProperty(collection.ChildPropertyName ?? "Id");
+                cmd.Parameters.AddWithValue("p1", id1Property.GetValue(newState, null));
+                cmd.Parameters.AddWithValue("p2", id2Property.GetValue(linkedObject, null));
+                CommandDebugger.Debug(cmd);
+                cmd.ExecuteNonQuery();
+            }
         }
 
         private void DeleteManyToManyRelation(ChildCollection collection, object newState, object linkedObject,
             string typeName)
         {
-            var cmd = GetSqlCommand();
-            var masterField = collection.MasterFieldName ?? $"{typeName}Id";
-            var childField = collection.ChildFieldName ?? $"{linkedObject.GetType().Name}Id";
-            cmd.CommandText = $"delete {collection.TableName} where [{masterField}] = @p1 and [{childField}] = @p2";
-            var id1Property = newState.GetType().GetProperty(collection.MasterPropertyName ?? "Id");
-            var id2Property = linkedObject.GetType().GetProperty(collection.ChildPropertyName ?? "Id");
-            cmd.Parameters.AddWithValue("p1", id1Property.GetValue(newState, null));
-            cmd.Parameters.AddWithValue("p2", id2Property.GetValue(linkedObject, null));
-            CommandDebugger.Debug(cmd);
-            cmd.ExecuteNonQuery();
+            using (var cmd = GetSqlCommand())
+            {
+                var masterField = collection.MasterFieldName ?? $"{typeName}Id";
+                var childField = collection.ChildFieldName ?? $"{linkedObject.GetType().Name}Id";
+                cmd.CommandText = $"delete {collection.TableName} where [{masterField}] = @p1 and [{childField}] = @p2";
+                var id1Property = newState.GetType().GetProperty(collection.MasterPropertyName ?? "Id");
+                var id2Property = linkedObject.GetType().GetProperty(collection.ChildPropertyName ?? "Id");
+                cmd.Parameters.AddWithValue("p1", id1Property.GetValue(newState, null));
+                cmd.Parameters.AddWithValue("p2", id2Property.GetValue(linkedObject, null));
+                CommandDebugger.Debug(cmd);
+                cmd.ExecuteNonQuery();
+            }
         }
 
         private static bool HasChanges(object item, object compareTo)
@@ -723,10 +786,10 @@ namespace Net.Arqsoft.QsMapper
 
         public void Dispose()
         {
-            if (_sqlConnection == null || _sqlConnection.State == ConnectionState.Closed)
-                return;
-            _sqlConnection.Close();
-            _sqlConnection.Dispose();
+            //if (_sqlConnection == null || _sqlConnection.State == ConnectionState.Closed)
+            //    return;
+            //_sqlConnection.Close();
+            //_sqlConnection.Dispose();
         }
     }
 }

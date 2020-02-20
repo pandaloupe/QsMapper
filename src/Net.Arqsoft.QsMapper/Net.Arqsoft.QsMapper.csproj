@@ -61,6 +61,7 @@
     <Compile Include="Caching\EntityCache.cs" />
     <Compile Include="Caching\IEntityCache.cs" />
     <Compile Include="CommandBuilder\MultiTableCommand.cs" />
+    <Compile Include="CommandBuilder\TableValueParameter.cs" />
     <Compile Include="MapperSettings.cs" />
     <Compile Include="ItemProvider.cs" />
     <Compile Include="Caching\RefreshStrategy.cs" />
@@ -94,29 +95,33 @@
     <Compile Include="QueryBuilder\QueryParameter.cs" />
     <Compile Include="QueryBuilder\BaseQuery.cs" />
     <Compile Include="QueryBuilder\RangePart.cs" />
+    <Compile Include="Util\ClassDebugger.cs" />
     <Compile Include="Util\TableColumn.cs" />
     <Compile Include="Util\TableInfo.cs" />
     <Compile Include="TableMap.cs" />
     <Compile Include="Util\ExpressionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp">
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Microsoft.CSharp.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Microsoft.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System">
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.dll</HintPath>
     </Reference>
     <Reference Include="System.Data">
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Data.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Data.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions">
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Data.DataSetExtensions.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Data.DataSetExtensions.dll</HintPath>
     </Reference>
     <Reference Include="System.XML">
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.XML.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.XML.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq">
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Xml.Linq.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Xml.Linq.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

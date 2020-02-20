@@ -112,6 +112,28 @@ namespace Net.Arqsoft.QsMapper.CommandBuilder
             cmd.CommandType = _commandType;
             foreach (var key in _parameters.Keys)
             {
+                // special handling for structured types
+                if (_parameters[key] is TableValueParameter tvp)
+                {
+                    var table = new DataTable();
+                    foreach (var columnName in tvp.Columns.Keys)
+                    {
+                        table.Columns.Add(columnName, tvp.Columns[columnName]);
+                    }
+
+                    foreach (var row in tvp.Rows)
+                    {
+                        table.Rows.Add(row.ToArray());
+                    }
+
+                    var param = cmd.Parameters.AddWithValue(key, table);
+                    param.SqlDbType = SqlDbType.Structured;
+                    param.TypeName = tvp.TypeName;
+
+                    continue;
+                }
+
+                // default handling for integral types
                 cmd.Parameters.AddWithValue(key, _parameters[key] ?? DBNull.Value);
             }
 

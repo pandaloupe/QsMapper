@@ -12,7 +12,11 @@ namespace Samples
 
         public SampleTests()
         {
-            _dao = new GenericDao(@"Data Source=.\SQLEXPRESS; Initial Catalog=QsSamples;Integrated Security=True");
+            _dao = new GenericDao
+            (
+                @"Data Source=.; Initial Catalog=QsSamples;Integrated Security=True",
+                new SampleCatalog()
+            );
         }
 
         [Test]
@@ -37,6 +41,17 @@ namespace Samples
             Assert.IsNotNull(customer);
             customer.Birthday = new DateTime(1985, 10, 3);
             _dao.Save(customer);
+        }
+
+        [Test]
+        public void TestFindCustomer()
+        {
+            var customer = _dao.Query<Customer>()
+                .Where(x => x.Field("LastName").IsEqualTo("Doe"))
+                .And(x => x.Field("FirstName").IsEqualTo("John"))
+                .FirstOrDefault();
+
+            Assert.IsNotNull(customer);
         }
     }
 }

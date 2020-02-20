@@ -536,25 +536,15 @@ namespace Net.Arqsoft.QsMapper
             get { return $"[{SchemaName}].[{TableName}]"; }
         }
 
-        public string ShortQueryName
-        {
-            get
-            {
-                return UseViewForQuery
-                    ? string.IsNullOrEmpty(ShortViewName) ? TableName + "Query" : ShortViewName
-                    : TableName;
-            }
-        }
+        public string ShortQueryName =>
+            UseViewForQuery
+                ? string.IsNullOrEmpty(ShortViewName) ? TableName + "Query" : ShortViewName
+                : TableName;
 
-        public string FullQueryName
-        {
-            get
-            {
-                return UseViewForQuery
-                    ? string.IsNullOrEmpty(FullViewName) ? TableName + "Query" : FullViewName
-                    : TableName;
-            }
-        }
+        public string FullQueryName =>
+            UseViewForQuery
+                ? string.IsNullOrEmpty(FullViewName) ? TableName + "Query" : FullViewName
+                : TableName;
 
         public object[] GetKeyValues(object item)
         {

@@ -1,15 +1,11 @@
-﻿using Net.Arqsoft.QsMapper.Exceptions;
+﻿namespace Net.Arqsoft.QsMapper {
+    using Net.Arqsoft.QsMapper.Exceptions;
 
-namespace Net.Arqsoft.QsMapper
-{
-    class NameResolver
-    {
-        public static void ResolveTableName<T>(TableMap<T> map) where T : class, new()
-        {
+    class NameResolver {
+        public static void ResolveTableName<T>(TableMap<T> map) where T: class, new() {
             //get class including last part of namespace
             var fullName = typeof(T).FullName;
-            if (fullName == null)
-            {
+            if (fullName==null) {
                 throw new InvalidMapTypeException("Anonymous Types cannot be mapped, stupid!");
             }
             var nameParts = fullName.Split('.');
@@ -18,12 +14,10 @@ namespace Net.Arqsoft.QsMapper
             map.Table(schema, GetPluralName(typeName));
         }
 
-        public static string GetPluralName(string typeName)
-        {
+        public static string GetPluralName(string typeName) {
             var typeRoot = typeName;
             var pluralExtension = "s";
-            switch (typeName.Substring(typeName.Length - 1, 1))
-            {
+            switch (typeName.Substring(typeName.Length - 1, 1)) {
                 case "s":
                 case "sh":
                 case "ch":
@@ -34,20 +28,17 @@ namespace Net.Arqsoft.QsMapper
                     pluralExtension = "ies";
                     break;
             }
-            if (typeName.EndsWith("Person"))
-            {
+            if (typeName.EndsWith("Person")) {
                 pluralExtension = "People";
                 typeRoot = typeName.Substring(0, typeName.LastIndexOf("Person"));
             }
-            else if (typeName.EndsWith("Schema"))
-            {
+            else if (typeName.EndsWith("Schema")) {
                 pluralExtension = "Schemes";
                 typeRoot = typeName.Substring(0, typeName.LastIndexOf("Schema"));
             }
-            else if (typeName.EndsWith("Child"))
-            {
+            else if (typeName.EndsWith("Child")) {
                 pluralExtension = "Children";
-                typeRoot = typeName.Substring(0, typeName.LastIndexOf("Child"));
+                typeRoot = typeName.Substring(0, typeName.LastIndexOf("Schema"));
             }
             return typeRoot + pluralExtension;
         }

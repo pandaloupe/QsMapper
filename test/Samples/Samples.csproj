@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Contacts\Customer.cs" />
+    <Compile Include="SampleCatalog.cs" />
     <Compile Include="SampleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

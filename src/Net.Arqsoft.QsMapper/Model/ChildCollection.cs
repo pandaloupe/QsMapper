@@ -32,7 +32,7 @@ namespace Net.Arqsoft.QsMapper.Model
         public string TableName { get; set; }
 
         /// <summary>
-        /// Name of stored procedure when commant type is set to Function or StoredProcedure. 
+        /// Name of stored procedure when command type is set to Function or StoredProcedure. 
         /// </summary>
         public string GetCommandName { get; set; }
 
