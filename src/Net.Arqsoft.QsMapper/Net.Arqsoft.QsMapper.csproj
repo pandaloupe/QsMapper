@@ -78,7 +78,7 @@
     <Compile Include="Model\IComplexProperty.cs" />
     <Compile Include="Exceptions\DataHasChangedException.cs" />
     <Compile Include="IItemProvider.cs" />
-    <Compile Include="QueryBuilder\CommandDebugger.cs" />
+    <Compile Include="QueryBuilder\CommandRunner.cs" />
     <Compile Include="QueryBuilder\CommandType.cs" />
     <Compile Include="QueryBuilder\ComparisonOperator.cs" />
     <Compile Include="Exceptions\InvalidMapTypeException.cs" />

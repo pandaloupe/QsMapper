@@ -242,7 +242,6 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
 
             queryText += GetOrderByClause();
             cmd.CommandText = queryText;
-            CommandDebugger.Debug(cmd);
             return cmd;
         }
 
@@ -306,9 +305,8 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
                 }
 
                 queryText += GetOrderByClause();
-                CommandDebugger.Debug(cmd);
                 cmd.CommandText = queryText;
-                using (var reader = cmd.ExecuteReader())
+                using (var reader = CommandRunner.Run(cmd, x => x.ExecuteReader()))
                 {
                     reader.Read();
                     var result = reader.GetInt32(0);
@@ -349,7 +347,6 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
                 }
 
                 cmd.CommandText = queryText;
-                CommandDebugger.Debug(cmd);
                 var queryResult = GetFindResult(cmd);
                 return queryResult.Count > 0 ? queryResult.First() : null;
             }
@@ -366,7 +363,7 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
 #if DEBUG
             var start = DateTime.Now;
 #endif
-            using (var reader = cmd.ExecuteReader())
+            using (var reader = CommandRunner.Run(cmd, x => x.ExecuteReader()))
             {
 #if DEBUG
                 var end = DateTime.Now;
@@ -569,7 +566,8 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
                 cmd.Parameters.AddWithValue(typeof(T).Name + "Id", TableMap.GetKeyValues(item).First());
             }
             else
-            { //assume table or view
+            { 
+                //assume table or view
                 var viewName = r.GetCommandName;
                 var masterField = r.MasterFieldName ?? $"{typeof(T).Name}Id";
                 var condition = $"[{masterField}]=@p1";
@@ -578,18 +576,16 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
                 cmd.Parameters.AddWithValue("p1", TableMap.GetKeyValues(item).First());
             }
 
-            CommandDebugger.Debug(cmd);
-
-            using (var reader = cmd.ExecuteReader())
+            using (var reader = CommandRunner.Run(cmd, x => x.ExecuteReader()))
             {
                 //get generic mapper for child property
-                var childType = new[] {r.ChildType};
+                var childType = new[] { r.ChildType };
                 var getMapper = _catalog.GetType().GetMethod("GetPropertyMapper");
                 var getGenericMapper = getMapper.MakeGenericMethod(childType);
                 var mapper = getGenericMapper.Invoke(_catalog, null);
 
-                var mapMethod = mapper.GetType().GetMethod("MapAll", new[] {typeof(IDataReader)});
-                var args = new object[] {reader};
+                var mapMethod = mapper.GetType().GetMethod("MapAll", new[] { typeof(IDataReader) });
+                var args = new object[] { reader };
                 var list = mapMethod.Invoke(mapper, args);
 
                 var prop = typeof(T).GetProperty(r.PropertyName);

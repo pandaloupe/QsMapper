@@ -158,9 +158,7 @@ namespace Net.Arqsoft.QsMapper
             var query = GetSqlCommand(queryText);
             query.Parameters.AddWithValue(keyName, id);
 
-            CommandDebugger.Debug(query);
-
-            using (var reader = query.ExecuteReader())
+            using (var reader = CommandRunner.Run(query, x => x.ExecuteReader()))
             {
                 T result = null;
                 if (reader.Read())
@@ -228,9 +226,7 @@ namespace Net.Arqsoft.QsMapper
                 query.Parameters.AddWithValue(map.KeyFields[i], map.GetKeyValues(item)[i]);
             }
 
-            CommandDebugger.Debug(query);
-
-            using (var reader = query.ExecuteReader())
+            using (var reader = CommandRunner.Run(query, x => x.ExecuteReader()))
             {
                 if (reader.Read())
                 {
@@ -258,9 +254,7 @@ namespace Net.Arqsoft.QsMapper
             var query = GetSqlCommand(queryText);
             map.AddKeyParams(query, compositeId);
 
-            CommandDebugger.Debug(query);
-
-            using (var reader = query.ExecuteReader())
+            using (var reader = CommandRunner.Run(query, x => x.ExecuteReader()))
             {
                 T result = null;
                 if (reader.Read())
@@ -336,9 +330,7 @@ namespace Net.Arqsoft.QsMapper
                             cmd.CommandText = update;
                             map.AddKeyParams(cmd, item);
 
-                            CommandDebugger.Debug(cmd);
-
-                            cmd.ExecuteNonQuery();
+                            CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
                         }
                     }
                 }
@@ -358,9 +350,7 @@ namespace Net.Arqsoft.QsMapper
             var cmd = GetSqlCommand(queryText);
             map.AddKeyParams(cmd, item);
 
-            CommandDebugger.Debug(cmd);
-
-            cmd.ExecuteNonQuery();
+            CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
             CloseConnection();
         }
 
@@ -371,9 +361,8 @@ namespace Net.Arqsoft.QsMapper
             var cmd = GetSqlCommand(queryText);
             map.AddKeyParams(cmd, keys);
 
-            CommandDebugger.Debug(cmd);
+            CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
 
-            cmd.ExecuteNonQuery();
             CloseConnection();
         }
 
@@ -390,9 +379,8 @@ namespace Net.Arqsoft.QsMapper
                 cmd.Parameters.AddWithValue(key, parameters[key]);
             }
 
-            CommandDebugger.Debug(cmd);
+            CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
 
-            cmd.ExecuteNonQuery();
             CloseConnection();
         }
 
@@ -494,21 +482,20 @@ namespace Net.Arqsoft.QsMapper
 
                     cmd.CommandText = insert;
 
-                    CommandDebugger.Debug(cmd);
-
-                    var identity = cmd.ExecuteScalar();
-                    if (identity is int)
+                    var identity = CommandRunner.Run(cmd, x => x.ExecuteScalar());
+                    
+                    if (identity is int i)
                     {
                         var baseItem = item as IntegerBasedEntity;
                         if (baseItem != null)
                         {
-                            baseItem.Id = (int) identity;
+                            baseItem.Id = i;
                         }
                         else
                         {
                             var key = map.KeyFields[0];
                             var prop = item.GetType().GetProperty(key);
-                            prop.SetValue(item, (int) identity, null);
+                            prop.SetValue(item, i, null);
                         }
                     }
                 }
@@ -733,8 +720,7 @@ namespace Net.Arqsoft.QsMapper
                 var id2Property = linkedObject.GetType().GetProperty(collection.ChildPropertyName ?? "Id");
                 cmd.Parameters.AddWithValue("p1", id1Property.GetValue(newState, null));
                 cmd.Parameters.AddWithValue("p2", id2Property.GetValue(linkedObject, null));
-                CommandDebugger.Debug(cmd);
-                cmd.ExecuteNonQuery();
+                CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
             }
         }
 
@@ -750,8 +736,7 @@ namespace Net.Arqsoft.QsMapper
                 var id2Property = linkedObject.GetType().GetProperty(collection.ChildPropertyName ?? "Id");
                 cmd.Parameters.AddWithValue("p1", id1Property.GetValue(newState, null));
                 cmd.Parameters.AddWithValue("p2", id2Property.GetValue(linkedObject, null));
-                CommandDebugger.Debug(cmd);
-                cmd.ExecuteNonQuery();
+                CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
             }
         }
 

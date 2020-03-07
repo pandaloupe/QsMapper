@@ -47,7 +47,7 @@ namespace Net.Arqsoft.QsMapper.CommandBuilder
             using (var cmd = GetCommand())
             {
                 var mapper = Catalog.GetPropertyMapper<T>();
-                using (var reader = cmd.ExecuteReader())
+                using (var reader = CommandRunner.Run(cmd, x => x.ExecuteReader()))
                 {
                     var result = mapper.MapAll(reader);
                     reader.Close();
@@ -62,7 +62,8 @@ namespace Net.Arqsoft.QsMapper.CommandBuilder
             {
                 cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int).Direction = ParameterDirection.ReturnValue;
                 var mapper = Catalog.GetPropertyMapper<T>();
-                using (var reader = cmd.ExecuteReader())
+
+                using (var reader = CommandRunner.Run(cmd, x => x.ExecuteReader()))
                 {
                     var result = mapper.MapAll(reader);
                     reader.Close();
@@ -76,12 +77,7 @@ namespace Net.Arqsoft.QsMapper.CommandBuilder
         {
             using (var cmd = GetCommand())
             {
-                if (CommandDebugger.DebuggingOn)
-                {
-                    CommandDebugger.Debug(cmd);
-                }
-
-                cmd.ExecuteNonQuery();
+                CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
             }
         }
 
@@ -91,12 +87,7 @@ namespace Net.Arqsoft.QsMapper.CommandBuilder
             {
                 cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int).Direction = ParameterDirection.ReturnValue;
 
-                if (CommandDebugger.DebuggingOn)
-                {
-                    CommandDebugger.Debug(cmd);
-                }
-
-                cmd.ExecuteNonQuery();
+                CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
 
                 return (int)cmd.Parameters["@RETURN_VALUE"].Value;
             }
