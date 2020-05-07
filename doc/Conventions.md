@@ -49,15 +49,15 @@ So the class *Net.Arqsoft.QsMapper.Samples.Model.Contacts.Customer* maps to the 
 
 The default plural is built by simply adding an 's' to the class name. 
 
-Exceptions known to the framework are:
+Exceptions are:
 
-- '*s' => '*ses'
-- '*sh' => '*shes'
-- '*ch' => '*ches'
-- '*y' => '*ies'
-- '*Person' => '*People'
-- '*Schema' => '*Schemes'
-- '*Child' => '*Children'
+- '...s' => '...ses'
+- '...sh' => '...shes'
+- '...ch' => '...ches'
+- '...y' => '...ies'
+- '...Person' => '...People'
+- '...Schema' => '...Schemes'
+- '...Child' => '...Children'
 
 Exceptions may be extended by changing the *GetPluralName()*-Method in the *NameResolver*-Class.
 

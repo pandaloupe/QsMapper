@@ -49,6 +49,8 @@ go
 
 The corresponding .Net Class should reside in a folder/namespace named **Contacts** and the class name itself would be **Customer**.
 
+As you might have noticed the table name is the plural form of the class name. For conventions regarding exceptions please refer to [doc/Conventions.md](doc/Conventions.md).
+
 Property names are mapped by the convention of identical names (case sensitive).
 
 ```csharp
