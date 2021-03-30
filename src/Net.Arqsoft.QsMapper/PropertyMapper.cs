@@ -112,12 +112,19 @@ namespace Net.Arqsoft.QsMapper
                 var columnName = data.GetName(i);
                 if (columnName == typeof(T).Name + "Id") columnName = "Id";
 
-                if (!_mappedProperties.ContainsKey(columnName))
+                var isSameType = o.GetType() == _type;
+
+                if (isSameType)
                 {
-                    _mappedProperties.Add(columnName, _type.GetProperty(columnName));
+                    if (!_mappedProperties.ContainsKey(columnName))
+                    {
+                        _mappedProperties.Add(columnName, _type.GetProperty(columnName));
+                    }
                 }
 
-                var property = _mappedProperties[columnName];
+                var property = isSameType
+                    ? _mappedProperties[columnName]
+                    : o.GetType().GetProperty(columnName);
 
                 var value = data.GetValue(i);
                 if (value == DBNull.Value) continue;
@@ -153,12 +160,19 @@ namespace Net.Arqsoft.QsMapper
                     columnName = "Id";
                 }
 
-                if (!_mappedProperties.ContainsKey(columnName))
+                var isSameType = o.GetType() == _type;
+
+                if (isSameType)
                 {
-                    _mappedProperties.Add(columnName, _type.GetProperty(columnName));
+                    if (!_mappedProperties.ContainsKey(columnName))
+                    {
+                        _mappedProperties.Add(columnName, _type.GetProperty(columnName));
+                    }
                 }
 
-                var property = _mappedProperties[columnName];
+                var property = isSameType
+                    ? _mappedProperties[columnName]
+                    : o.GetType().GetProperty(columnName);
 
                 var value = row[i];
                 if (value == DBNull.Value)
