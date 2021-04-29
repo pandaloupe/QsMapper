@@ -101,7 +101,10 @@ namespace Net.Arqsoft.QsMapper
         public void CloseConnection()
         {
             if (_sqlConnection == null || _transaction != null)
+            {
                 return;
+            }
+
             _sqlConnection.Close();
             _sqlConnection.Dispose();
             _sqlConnection = null;
@@ -413,7 +416,10 @@ namespace Net.Arqsoft.QsMapper
         public void BeginTransaction()
         {
             if (_transaction != null)
+            {
                 return;
+            }
+
             _transaction = SqlConnection.BeginTransaction();
         }
 
