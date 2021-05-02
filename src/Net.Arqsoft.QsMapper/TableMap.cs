@@ -20,6 +20,11 @@ namespace Net.Arqsoft.QsMapper
     /// <typeparam name="T"></typeparam>
     public class TableMap<T> where T : class, new()
     {
+        public TableMap()
+        {
+            HasAutoId = true;
+        }
+
         #region Private
 
         /**
@@ -55,6 +60,7 @@ namespace Net.Arqsoft.QsMapper
         public Type PluginType { get; set; }
 
         public bool IsProvisioned { get; set; }
+        public bool HasAutoId { get; set; }
 
         public string TableName
         {
@@ -160,6 +166,16 @@ namespace Net.Arqsoft.QsMapper
         #endregion
 
         #region Fluent Catalog Methods
+
+        /// <summary>
+        /// Makes the ID field writeable in insert statements.
+        /// </summary>
+        /// <returns></returns>
+        public TableMap<T> IncludeIdInInsert()
+        {
+            HasAutoId = false;
+            return this;
+        }
 
         /// <summary>
         /// Set Keys Field(s) if complex key or not equal "Id"

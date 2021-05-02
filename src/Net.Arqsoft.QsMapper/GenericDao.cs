@@ -518,9 +518,13 @@ namespace Net.Arqsoft.QsMapper
             where T : class, new()
         {
             var type = item.GetType();
-            if (map.ReadonlyFields != null && map.ReadonlyFields.Contains(field))
+
+            if (!map.KeyFields.Contains(field) || map.HasAutoId)
             {
-                return false;
+                if (map.ReadonlyFields != null && map.ReadonlyFields.Contains(field))
+                {
+                    return false;
+                }
             }
 
             var prop = type.GetProperty(field);
