@@ -425,6 +425,11 @@ namespace Net.Arqsoft.QsMapper
 
         public void CommitTransaction()
         {
+            if (_transaction == null)
+            {
+                return;
+            }
+
             _transaction.Commit();
             _transaction.Dispose();
             _transaction = null;
@@ -432,6 +437,11 @@ namespace Net.Arqsoft.QsMapper
 
         public void RollbackTransaction()
         {
+            if (_transaction == null)
+            {
+                return;
+            }
+
             _transaction.Rollback();
             _transaction.Dispose();
             _transaction = null;
