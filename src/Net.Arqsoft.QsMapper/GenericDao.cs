@@ -430,9 +430,19 @@ namespace Net.Arqsoft.QsMapper
                 return;
             }
 
-            _transaction.Commit();
-            _transaction.Dispose();
-            _transaction = null;
+            try
+            {
+                _transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                _log.Error("SQL transaction COMMIT failed.", ex);
+            }
+            finally
+            {
+                _transaction.Dispose();
+                _transaction = null;
+            }
         }
 
         public void RollbackTransaction()
@@ -442,9 +452,19 @@ namespace Net.Arqsoft.QsMapper
                 return;
             }
 
-            _transaction.Rollback();
-            _transaction.Dispose();
-            _transaction = null;
+            try
+            {
+                _transaction.Rollback();
+            }
+            catch (Exception ex)
+            {
+                _log.Error("SQL transaction ROLLBACK failed.", ex);
+            }
+            finally
+            {
+                _transaction.Dispose();
+                _transaction = null;
+            }
         }
 
         public ICommand Execute(string procedureName)
@@ -798,4 +818,3 @@ namespace Net.Arqsoft.QsMapper
         }
     }
 }
-
