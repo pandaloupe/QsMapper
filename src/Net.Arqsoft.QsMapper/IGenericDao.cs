@@ -147,17 +147,26 @@ namespace Net.Arqsoft.QsMapper {
         /// <summary>
         /// Begin a Database Transaction
         /// </summary>
+        [Obsolete("Use ExecuteTransaction instead.")]
         void BeginTransaction();
 
         /// <summary>
         /// Commit the current Database Transaction
         /// </summary>
+        [Obsolete("Use ExecuteTransaction instead.")]
         void CommitTransaction();
 
         /// <summary>
         /// Rollback the current Database Transaction
         /// </summary>
+        [Obsolete("Use ExecuteTransaction instead.")]
         void RollbackTransaction();
+
+        /// <summary>
+        /// Execute commands inside a single transaction
+        /// </summary>
+        /// <param name="action"></param>
+        void ExecuteTransaction(Action action);
 
         /// <summary>
         /// Start a execution chain for a sql server stored procedure

@@ -279,69 +279,75 @@ namespace Net.Arqsoft.QsMapper
 
         public virtual void Save<T>(object item) where T : class, new()
         {
-            var itemBase = item as IntegerBasedEntity;
+            ExecuteTransaction(() =>
+            {
+                var itemBase = item as IntegerBasedEntity;
 
-            if (itemBase != null && itemBase.Id == 0)
-            {
-                ExecuteInsert<T>(item);
-            }
-            else
-            {
-                if (_log.IsDebugEnabled)
+                if (itemBase != null && itemBase.Id == 0)
                 {
-                    _log.Debug("--begin update--");
+                    ExecuteInsert<T>(item);
                 }
-
-                var map = Catalog.GetTableMap<T>();
-                var queryText = "select * from " + map.FullTableName + "\nwhere " + map.GetKeyCondition();
-                var query = GetSqlCommand(queryText);
-                map.AddKeyParams(query, item);
-                using (var reader = query.ExecuteReader())
+                else
                 {
-                    if (!reader.Read())
+                    if (_log.IsDebugEnabled)
                     {
-                        reader.Close();
-                        ExecuteInsert<T>(item);
+                        _log.Debug("--begin update--");
                     }
-                    else
+
+                    var map = Catalog.GetTableMap<T>();
+                    var queryText = "select * from " + map.FullTableName + "\nwhere " + map.GetKeyCondition();
+                    var query = GetSqlCommand(queryText);
+                    map.AddKeyParams(query, item);
+                    using (var reader = query.ExecuteReader())
                     {
-                        var fields = new List<string>();
-                        for (var i = 0; i < reader.FieldCount; i++)
+                        if (!reader.Read())
                         {
-                            fields.Add(reader.GetName(i));
+                            reader.Close();
+                            ExecuteInsert<T>(item);
                         }
-                        reader.Close();
-
-                        var update = "update " + map.FullTableName;
-                        var setters = new List<string>();
-
-                        using (var cmd = GetSqlCommand())
+                        else
                         {
-
-                            foreach (var field in fields)
+                            var fields = new List<string>();
+                            for (var i = 0; i < reader.FieldCount; i++)
                             {
-                                if (!AddParameter(cmd, field, item, map))
+                                fields.Add(reader.GetName(i));
+                            }
+
+                            reader.Close();
+
+                            var update = "update " + map.FullTableName;
+                            var setters = new List<string>();
+
+                            using (var cmd = GetSqlCommand())
+                            {
+
+                                foreach (var field in fields)
                                 {
-                                    continue;
+                                    if (!AddParameter(cmd, field, item, map))
+                                    {
+                                        continue;
+                                    }
+
+                                    setters.Add(string.Format("[{0}]=@{0}", field));
                                 }
 
-                                setters.Add(string.Format("[{0}]=@{0}", field));
+                                update += "\nset " + string.Join(",\n  ", setters.ToArray())
+                                                   + "\nwhere " + map.GetKeyCondition();
+
+                                cmd.CommandText = update;
+                                map.AddKeyParams(cmd, item);
+
+                                CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
                             }
-                            update += "\nset " + string.Join(",\n  ", setters.ToArray())
-                                      + "\nwhere " + map.GetKeyCondition();
-
-                            cmd.CommandText = update;
-                            map.AddKeyParams(cmd, item);
-
-                            CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
                         }
                     }
                 }
-            }
-            //update relations only if full object was passed
-            //if (typeof(T) == item.GetType()) {
-            UpdateRelations<T>(item);
-            //}
+
+                //update relations only if full object was passed
+                //if (typeof(T) == item.GetType()) {
+                UpdateRelations<T>(item);
+                //}
+            });
 
             CloseConnection();
         }
@@ -464,6 +470,36 @@ namespace Net.Arqsoft.QsMapper
             {
                 _transaction.Dispose();
                 _transaction = null;
+            }
+        }
+
+        public void ExecuteTransaction(Action action)
+        {
+            // already inside transaction
+            if (_transaction != null)
+            {
+                action?.Invoke();
+                return;
+            }
+
+            using (var transaction = SqlConnection.BeginTransaction())
+            {
+                _transaction = transaction;
+
+                try
+                {
+                    action?.Invoke();
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+                finally
+                {
+                    _transaction = null;
+                }
             }
         }
 
