@@ -552,6 +552,8 @@ namespace Net.Arqsoft.QsMapper
                               + "\nvalues (" + string.Join(",\n  ", columns.Select(x => "@" + x)) + ");"
                               + "select cast(scope_identity() as int);";
 
+                    _log.Debug($"Executing Insert: {insert}");
+
                     cmd.CommandText = insert;
 
                     var identity = CommandRunner.Run(cmd, x => x.ExecuteScalar());
