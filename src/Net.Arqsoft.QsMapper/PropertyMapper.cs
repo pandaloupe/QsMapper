@@ -110,7 +110,9 @@ namespace Net.Arqsoft.QsMapper
 
             if (property == null)
             {
+#if DEBUG
                 _log.Warn($"Property '{columnName}' could not be resolved on object of type {o.GetType().FullName}");
+#endif
                 return;
             }
 
