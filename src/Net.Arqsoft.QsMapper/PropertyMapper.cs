@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Data;
+using log4net;
 
 namespace Net.Arqsoft.QsMapper
 {
@@ -15,6 +16,7 @@ namespace Net.Arqsoft.QsMapper
         private readonly IDictionary<string, PropertyInfo> _mappedProperties = new Dictionary<string, PropertyInfo>();
         private readonly Type _type = typeof(T);
         private readonly ICatalog _catalog;
+        private readonly ILog _log = LogManager.GetLogger(typeof(PropertyMapper<>));
 
         /// <summary>
         /// Create a new Property Mapper for the current catalog.
@@ -61,42 +63,60 @@ namespace Net.Arqsoft.QsMapper
             for (var i = 0; i < data.FieldCount; i++)
             {
                 var columnName = data.GetName(i);
-                if (columnName == typeof(T).Name + "Id") columnName = "Id";
-
-                var isSameType = o.GetType() == _type;
-
-                if (isSameType)
-                {
-                    if (!_mappedProperties.ContainsKey(columnName))
-                    {
-                        _mappedProperties.Add(columnName, _type.GetProperty(columnName));
-                    }
-                }
-
-                var property = isSameType
-                    ? _mappedProperties[columnName]
-                    : o.GetType().GetProperty(columnName);
-
                 var value = data.GetValue(i);
-                if (value == DBNull.Value) continue;
+                Map(o, columnName, value);
+            }
+        }
 
-                if (columnName.Contains('.'))
-                {
-                    MapComplexProperty(property, o, columnName, value);
-                    continue;
-                }
+        private void Map(object o, string columnName, object value)
+        {
+            if (columnName == typeof(T).Name + "Id") columnName = "Id";
 
-                if (columnName.EndsWith("Id"))
-                {
-                    var fieldName = columnName.Substring(0, columnName.Length - 2) + ".Id";
-                    MapComplexProperty(property, o, fieldName, value);
-                    //try to map as property anyway
-                }
+            var isSameType = o.GetType() == _type;
 
-                if (property?.CanWrite == true)
+            if (isSameType)
+            {
+                if (!_mappedProperties.ContainsKey(columnName))
                 {
-                    property?.SetValue(o, value, null);
+                    _mappedProperties.Add(columnName, _type.GetProperty(columnName));
                 }
+            }
+
+            var property = isSameType
+                ? _mappedProperties[columnName]
+                : o.GetType().GetProperty(columnName);
+
+            if (value == DBNull.Value || value == null)
+            {
+                return;
+            }
+
+            if (columnName.Contains('.'))
+            {
+                if (MapComplexProperty(property, o, columnName, value))
+                {
+                    return;
+                }
+            }
+
+            if (columnName.EndsWith("Id"))
+            {
+                var fieldName = columnName.Substring(0, columnName.Length - 2) + ".Id";
+                if (MapComplexProperty(property, o, fieldName, value))
+                {
+                    return;
+                }
+            }
+
+            if (property == null)
+            {
+                _log.Warn($"Property '{columnName}' could not be resolved on object of type {o.GetType().FullName}");
+                return;
+            }
+
+            if (property.CanWrite)
+            {
+                property.SetValue(o, value, null);
             }
         }
 
@@ -106,46 +126,8 @@ namespace Net.Arqsoft.QsMapper
             for (var i = 0; i < table.Columns.Count; i++)
             {
                 var columnName = table.Columns[i].ColumnName;
-                if (columnName == typeof(T).Name + "Id")
-                {
-                    columnName = "Id";
-                }
-
-                var isSameType = o.GetType() == _type;
-
-                if (isSameType)
-                {
-                    if (!_mappedProperties.ContainsKey(columnName))
-                    {
-                        _mappedProperties.Add(columnName, _type.GetProperty(columnName));
-                    }
-                }
-
-                var property = isSameType
-                    ? _mappedProperties[columnName]
-                    : o.GetType().GetProperty(columnName);
-
                 var value = row[i];
-                if (value == DBNull.Value)
-                    continue;
-
-                if (columnName.Contains('.'))
-                {
-                    MapComplexProperty(property, o, columnName, value);
-                    continue;
-                }
-
-                if (columnName.EndsWith("Id"))
-                {
-                    var fieldName = columnName.Substring(0, columnName.Length - 2) + ".Id";
-                    MapComplexProperty(property, o, fieldName, value);
-                    //try to map as property anyway
-                }
-
-                if (property?.CanWrite == true)
-                {
-                    property?.SetValue(o, value, null);
-                }
+                Map(o, columnName, value);
             }
         }
 
@@ -161,6 +143,7 @@ namespace Net.Arqsoft.QsMapper
             {
                 result.Add(Map(reader));
             }
+
             reader.Close();
             return result;
         }
@@ -181,20 +164,20 @@ namespace Net.Arqsoft.QsMapper
             return result;
         }
 
-        private void MapComplexProperty(PropertyInfo property, object o, string propertyName, object value)
+        private bool MapComplexProperty(PropertyInfo property, object o, string propertyName, object value)
         {
             var propParts = propertyName.Split('.');
-            MapComplexProperty(property, o, propParts, value);
+            return MapComplexProperty(property, o, propParts, value);
         }
 
-        private void MapComplexProperty(PropertyInfo property, object o, string[] propertyNameParts, object value)
+        private bool MapComplexProperty(PropertyInfo property, object o, string[] propertyNameParts, object value)
         {
             var propParts = propertyNameParts;
             var propName = propParts[0];
             var childProp = o.GetType().GetProperty(propName);
             if (childProp == null)
             {
-                return; //no such property on object
+                return false; //no such property on object
             }
 
             // create instance for object type property if not present
@@ -208,19 +191,23 @@ namespace Net.Arqsoft.QsMapper
             var propInstance = childProp.GetValue(o, null);
             if (propParts.Length > 2)
             {
-                MapComplexProperty(property, propInstance, propParts.Skip(1).ToArray(), value);
-                return;
+                return MapComplexProperty(property, propInstance, propParts.Skip(1).ToArray(), value);
             }
 
             // final property found
             property = property ?? childProp.PropertyType.GetProperty(propParts[1]);
-            if (property == null || !property.CanWrite)
+            if (property == null)
             {
                 // property cannot be resolved by name or not readable
-                return;
+                return false;
             }
 
-            property.SetValue(propInstance, value, null);
+            if (property.CanWrite)
+            {
+                property.SetValue(propInstance, value, null);
+            }
+
+            return true;
         }
     }
 }
