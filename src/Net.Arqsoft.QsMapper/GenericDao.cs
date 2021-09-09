@@ -697,30 +697,36 @@ namespace Net.Arqsoft.QsMapper
             // compare with old state for updates, deletes and inserts
             var oldStateType = oldState.GetType();
             var oldStateProp = oldStateType.GetProperty(collection.PropertyName);
-            var oldCollection = oldStateProp.GetValue(oldState, null) as IEnumerable<object>;
-            if (oldCollection != null)
+            if (oldStateProp.GetValue(oldState, null) is IEnumerable<object> oldCollection)
             {
                 // process deletes
-                foreach (var d in oldCollection.Where(x => !newCollection.Contains(x)))
+                foreach (var d in oldCollection.Except(newCollection))
                 {
                     // delete d from database    
                     var oldBase = d as IntegerBasedEntity;
                     if (oldBase != null && oldBase.Id == 0)
+                    {
                         continue;
+                    }
 
                     delete.Invoke(this, new[] { d });
                 }
+
                 // process updates
-                foreach (var u in newCollection.Where(x => oldCollection.Contains(x)))
+                foreach (var u in newCollection.Intersect(oldCollection))
                 {
                     var oldItem = oldCollection.First(x => x.Equals(u));
                     if (!HasChanges(u, oldItem))
+                    {
                         continue;
+                    }
+
                     // update u
                     save.Invoke(this, new[] { u });
                 }
+
                 // process inserts
-                foreach (var i in newCollection.Where(x => !oldCollection.Contains(x)))
+                foreach (var i in newCollection.Except(oldCollection))
                 {
                     // insert i
                     save.Invoke(this, new[] { i });
@@ -728,7 +734,7 @@ namespace Net.Arqsoft.QsMapper
             }
             else
             {
-                // inserts all items
+                // insert all items when old collection is null
                 foreach (var i in newCollection)
                 {
                     // insert i
@@ -741,17 +747,25 @@ namespace Net.Arqsoft.QsMapper
         {
             //if no table name is set this is considered a read only collection
             if (collection.TableName == null)
+            {
                 return;
+            }
+
             var newStateType = newState.GetType();
             var newStateProp = newStateType.GetProperty(collection.PropertyName);
             //only update collections that are present on newState object
             if (newStateProp == null)
+            {
                 return;
+            }
 
             var newCollection = newStateProp.GetValue(newState, null) as IEnumerable<object>;
             //only update collections that are present on newState object
             if (newCollection == null)
+            {
                 return;
+            }
+
             if (oldState != null)
             {
                 //compare with old state for deletes and inserts
@@ -761,13 +775,14 @@ namespace Net.Arqsoft.QsMapper
                 if (oldCollection != null)
                 {
                     //process deletes
-                    foreach (var d in oldCollection.Where(x => !newCollection.Contains(x)))
+                    foreach (var d in oldCollection.Except(newCollection))
                     {
                         //delete d from database
                         DeleteManyToManyRelation(collection, newState, d, oldState.GetType().Name);
                     }
+
                     //process inserts
-                    foreach (var i in newCollection.Where(x => !oldCollection.Contains(x)))
+                    foreach (var i in newCollection.Except(oldCollection))
                     {
                         //insert i
                         InsertManyToManyRelation(collection, newState, i, oldState.GetType().Name);
