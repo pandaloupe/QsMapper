@@ -451,7 +451,7 @@ namespace Net.Arqsoft.QsMapper
         {
             var propertyName = ExpressionHelper.GetPropertyName(propertyExpression);
             var tableName = $"[{SchemaName}].[{typeof(T).Name}{propertyName}]";
-            return WithMany(propertyExpression, viewName, tableName);
+            return WithMany(propertyExpression, tableName, viewName);
         }
 
         /// <summary>
