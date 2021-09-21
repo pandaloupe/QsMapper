@@ -19,8 +19,6 @@
             var pluralExtension = "s";
             switch (typeName.Substring(typeName.Length - 1, 1)) {
                 case "s":
-                case "sh":
-                case "ch":
                     pluralExtension = "es";
                     break;
                 case "y":
@@ -28,18 +26,33 @@
                     pluralExtension = "ies";
                     break;
             }
+
+            switch (typeName.Substring(typeName.Length - 2, 2))
+            {
+                case "sh":
+                case "ch":
+                    pluralExtension = "es";
+                    break;
+                case "ay":
+                    pluralExtension = "ys";
+                    break;
+            }
+
             if (typeName.EndsWith("Person")) {
                 pluralExtension = "People";
                 typeRoot = typeName.Substring(0, typeName.LastIndexOf("Person"));
             }
+
             else if (typeName.EndsWith("Schema")) {
                 pluralExtension = "Schemes";
                 typeRoot = typeName.Substring(0, typeName.LastIndexOf("Schema"));
             }
+
             else if (typeName.EndsWith("Child")) {
                 pluralExtension = "Children";
                 typeRoot = typeName.Substring(0, typeName.LastIndexOf("Schema"));
             }
+
             return typeRoot + pluralExtension;
         }
     }
