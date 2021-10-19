@@ -108,17 +108,20 @@ namespace Net.Arqsoft.QsMapper
                 }
             }
 
-            if (property == null)
+            if (property == null && MapperSettings.LogUnmappedProperties)
             {
-#if DEBUG
-                _log.Warn($"Property '{columnName}' could not be resolved on object of type {o.GetType().FullName}");
-#endif
+                _log.Warn($"Property '{columnName}' could not be resolved on object of type {o.GetType().FullName}.");
                 return;
             }
 
-            if (property.CanWrite)
+            if (property?.CanWrite == true)
             {
                 property.SetValue(o, value, null);
+            }
+            else if (MapperSettings.LogUnmappedProperties)
+            {
+                _log.Warn($"Property '{columnName}' on object of type {o.GetType().FullName} is read only.");
+                return;
             }
         }
 

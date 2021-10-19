@@ -10,6 +10,7 @@ namespace Net.Arqsoft.QsMapper
 
         private bool _debuggingOn;
         private bool _useProvisioning;
+        private bool _logUnmappedProperties;
 
         /// <summary>
         /// Triggers debug output of all executed SQL commands
@@ -28,5 +29,15 @@ namespace Net.Arqsoft.QsMapper
             get => Instance.Value._useProvisioning;
             set => Instance.Value._useProvisioning = value;
         }
+
+        /// <summary>
+        /// Defines if properties that cannot be resolved should be logged.
+        /// </summary>
+        public static bool LogUnmappedProperties
+        {
+            get => Instance.Value._logUnmappedProperties;
+            set => Instance.Value._logUnmappedProperties = value;
+        }
+
     }
 }
