@@ -39,5 +39,11 @@ namespace Net.Arqsoft.QsMapper.CommandBuilder
         /// Execute the stored procedure and return it's return value
         /// </summary>
         int AsFunction();
+
+        /// <summary>
+        /// Execute the stored procedure and return it's return value
+        /// </summary>
+        T AsFunction<T>();
+
     }
 }

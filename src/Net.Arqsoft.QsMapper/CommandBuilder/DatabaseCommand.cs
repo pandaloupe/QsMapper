@@ -93,6 +93,32 @@ namespace Net.Arqsoft.QsMapper.CommandBuilder
             }
         }
 
+        public T AsFunction<T>()
+        {
+            using (var cmd = GetCommand())
+            {
+                SqlDbType returnType;
+                if (typeof(T) == typeof(int))
+                {
+                    returnType = SqlDbType.Int;
+                }
+                else if (typeof(T) == typeof(string))
+                {
+                    returnType = SqlDbType.NVarChar;
+                }
+                else
+                {
+                    throw new Exception($"Invalid Type {typeof(T)}");
+                }
+
+                cmd.Parameters.Add("@RETURN_VALUE", returnType).Direction = ParameterDirection.ReturnValue;
+
+                CommandRunner.Run(cmd, x => x.ExecuteNonQuery());
+
+                return (T)cmd.Parameters["@RETURN_VALUE"].Value;
+            }
+        }
+
         /// <summary>
         /// Prepare command and set parameters
         /// </summary>
