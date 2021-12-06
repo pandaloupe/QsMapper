@@ -61,6 +61,7 @@
     <Compile Include="Caching\IEntityCache.cs" />
     <Compile Include="CommandBuilder\MultiTableCommand.cs" />
     <Compile Include="CommandBuilder\TableValueParameter.cs" />
+    <Compile Include="Exceptions\MapperException.cs" />
     <Compile Include="MapperSettings.cs" />
     <Compile Include="ItemProvider.cs" />
     <Compile Include="Caching\RefreshStrategy.cs" />

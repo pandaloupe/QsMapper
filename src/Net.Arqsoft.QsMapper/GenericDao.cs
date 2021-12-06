@@ -9,6 +9,7 @@ using System.Reflection;
 using log4net;
 
 using Net.Arqsoft.QsMapper.CommandBuilder;
+using Net.Arqsoft.QsMapper.Exceptions;
 using Net.Arqsoft.QsMapper.Model;
 using Net.Arqsoft.QsMapper.QueryBuilder;
 
@@ -549,8 +550,8 @@ namespace Net.Arqsoft.QsMapper
                     }
 
                     insert += " ( " + string.Join(",\n  ", columns.Select(x => "[" + x + "]")) + ")"
-                              + "\nvalues (" + string.Join(",\n  ", columns.Select(x => "@" + x)) + ");"
-                              + "select cast(scope_identity() as int);";
+                        + "\nvalues (" + string.Join(",\n  ", columns.Select(x => "@" + x)) + ");"
+                        + "select cast(scope_identity() as int);";
 
                     _log.Debug($"Executing Insert: {insert}");
 
@@ -632,8 +633,13 @@ namespace Net.Arqsoft.QsMapper
                     var refItem = prop.GetValue(item, null);
                     if (refItem != null)
                     {
-                        var refType = prop.PropertyType;
+                        var refType = refItem.GetType();
                         var refProp = refType.GetProperty("Id");
+                        if (refProp == null)
+                        {
+                            throw new MapperException($"'Id' property not found on object of type {refType.Name}");
+                        }
+
                         cmd.Parameters.AddWithValue(field, refProp.GetValue(refItem, null) ?? DBNull.Value);
                     }
                     else

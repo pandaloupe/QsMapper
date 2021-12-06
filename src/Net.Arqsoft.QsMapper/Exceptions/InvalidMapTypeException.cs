@@ -1,7 +1,9 @@
-﻿namespace Net.Arqsoft.QsMapper.Exceptions {
+﻿namespace Net.Arqsoft.QsMapper.Exceptions
+{
     using global::System;
 
-    class InvalidMapTypeException : Exception {
-        public InvalidMapTypeException(string message) : base(message) {}
+    class InvalidMapTypeException : Exception
+    {
+        public InvalidMapTypeException(string message) : base(message) { }
     }
 }
