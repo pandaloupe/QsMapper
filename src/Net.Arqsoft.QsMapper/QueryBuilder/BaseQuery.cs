@@ -19,6 +19,8 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
     {
 
         private string _baseQuery;
+        private int _top;
+        private OrderParameter _currentOrderParameter;
 
         /// <summary>
         /// Constructor
@@ -70,8 +72,6 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
             set { _orderParameters = value; }
         }
 
-        private OrderParameter _currentOrderParameter;
-
         /// <summary>
         /// Build a new query instance.
         /// </summary>
@@ -102,6 +102,12 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         }
 
         #region Fluent catalog methods
+
+        public IQuery<T> Take(int i)
+        {
+            _top = i;
+            return this;
+        }
 
         /// <summary>
         /// Table or view to use.
@@ -405,12 +411,17 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
 
         protected internal virtual string GetShortQuery()
         {
-            return _baseQuery ?? $"select * from [{TableMap.SchemaName}].[{TableMap.ShortQueryName}]";
+            var query = _baseQuery ?? $"select * from [{TableMap.SchemaName}].[{TableMap.ShortQueryName}]";
+            return _top > 0
+                ? query.Replace("select ", $"select top {_top} ")
+                : query;
         }
 
         protected internal virtual string GetFullQuery()
         {
-            return $"select * from [{TableMap.SchemaName}].[{TableMap.FullQueryName}]";
+            return _top > 0
+                ? $"select top {_top} * from [{TableMap.SchemaName}].[{TableMap.FullQueryName}]"
+                : $"select * from [{TableMap.SchemaName}].[{TableMap.FullQueryName}]";
         }
 
         protected internal virtual string GetCountQuery()

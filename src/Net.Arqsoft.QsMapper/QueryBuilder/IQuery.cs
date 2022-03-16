@@ -10,6 +10,13 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
     public interface IQuery<T> where T : class, new()
     {
         /// <summary>
+        /// Reduces the result to a certain number of records.
+        /// </summary>
+        /// <param name="i">Number of records to be returned.</param>
+        /// <returns></returns>
+        IQuery<T> Take(int i);
+
+        /// <summary>
         /// Defines the table or view name to be used
         /// </summary>
         /// <param name="viewName"></param>
