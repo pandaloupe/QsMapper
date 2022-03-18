@@ -340,7 +340,8 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         {
             using (var cmd = Dao.GetSqlCommand())
             {
-                var queryText = GetShortQuery().Replace("select ", "select top 1 ");
+                _top = 1;
+                var queryText = GetShortQuery();
                 if (QueryParameters.Count > 0)
                 {
                     var condition = GetConditionString(cmd);
@@ -412,7 +413,7 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         protected internal virtual string GetShortQuery()
         {
             var query = _baseQuery ?? $"select * from [{TableMap.SchemaName}].[{TableMap.ShortQueryName}]";
-            return _top > 0
+            return _top > 0 && !query.Contains("select top")
                 ? query.Replace("select ", $"select top {_top} ")
                 : query;
         }
