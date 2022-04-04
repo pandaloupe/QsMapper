@@ -96,6 +96,8 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
             {
                 _baseQuery = null;
             }
+
+            _top = 0;
             QueryParameters = null;
             OrderParameters = null;
             return this;
