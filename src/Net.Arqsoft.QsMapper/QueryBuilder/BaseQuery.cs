@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-
+using log4net;
 using Net.Arqsoft.QsMapper.Model;
 
 namespace Net.Arqsoft.QsMapper.QueryBuilder
@@ -21,6 +21,7 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         private string _baseQuery;
         private int _top;
         private OrderParameter _currentOrderParameter;
+        private readonly ILog _log = LogManager.GetLogger(typeof(BaseQuery<T>));
 
         /// <summary>
         /// Constructor
@@ -57,8 +58,8 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         /// </summary>
         public IList<QueryParameter> QueryParameters
         {
-            get { return _queryParameters ?? (_queryParameters = new List<QueryParameter>()); }
-            set { _queryParameters = value; }
+            get => _queryParameters ?? (_queryParameters = new List<QueryParameter>());
+            set => _queryParameters = value;
         }
 
         private IList<OrderParameter> _orderParameters;
@@ -68,8 +69,8 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
         /// </summary>
         public IList<OrderParameter> OrderParameters
         {
-            get { return _orderParameters ?? (_orderParameters = new List<OrderParameter>()); }
-            set { _orderParameters = value; }
+            get => _orderParameters ?? (_orderParameters = new List<OrderParameter>());
+            set => _orderParameters = value;
         }
 
         /// <summary>
@@ -376,15 +377,14 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
             {
 #if DEBUG
                 var end = DateTime.Now;
-                Console.WriteLine(@"Execute SQL {0:#,##0}mS", end.Subtract(start).TotalMilliseconds);
+                _log.Debug($"Execute SQL {end.Subtract(start).TotalMilliseconds:#,##0}mS");
                 start = DateTime.Now;
 #endif
                 var result = mapper.MapAll(reader);
 
 #if DEBUG
                 end = DateTime.Now;
-                Console.WriteLine(@"Mapped {0:#,##0} Objects in {1:#,##0}mS", result.Count,
-                    end.Subtract(start).TotalMilliseconds);
+                _log.Debug($"Mapped {result.Count:#,##0} Objects in {end.Subtract(start).TotalMilliseconds:#,##0}mS");
 #endif
                 reader.Close();
                 return result;
@@ -610,7 +610,7 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
 
             var end = DateTime.Now;
 #if DEBUG
-            Console.WriteLine(@"Execute query {0:#,##0}mS", end.Subtract(start).TotalMilliseconds);
+            _log.Debug($"Execute query {end.Subtract(start).TotalMilliseconds:#,##0}mS");
 #endif
         }
     }

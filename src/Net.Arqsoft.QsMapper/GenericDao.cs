@@ -60,19 +60,16 @@ namespace Net.Arqsoft.QsMapper
 #endif
             if (_sqlConnection == null)
             {
-                Debug.Print("connection == null");
                 _sqlConnection = _getConnection();
             }
             else if (_sqlConnection.State != ConnectionState.Open)
             {
-                Debug.Print("connection state != open");
                 _sqlConnection.Dispose();
                 _sqlConnection = _getConnection();
             }
 
             try
             {
-                Debug.Print("testing connection");
                 // test for connection timeout, should not be used inside transaction
                 if (_transaction == null)
                 {
@@ -84,17 +81,17 @@ namespace Net.Arqsoft.QsMapper
             }
             catch (SqlException ex)
             {
-                Debug.Print("SqlExeption caught: ErrorCode: {0}, Message: {1}", ex.ErrorCode, ex.Message);
+                _log.Error("OpenConnection failed", ex);
                 _sqlConnection = _getConnection();
             }
             catch (Exception ex)
             {
-                Debug.Print("{0} caught: Message: {1}", ex.GetType().Name, ex.Message);
+                _log.Error("OpenConnection failed", ex);
                 throw;
             }
 #if DEBUG
             var span = DateTime.Now.Subtract(time).TotalMilliseconds;
-            Debug.Print("Open Connection {0:#,##0} mS", span);
+            _log.Debug($"Open Connection {span:#,##0} mS");
 #endif
             return _sqlConnection;
         }
@@ -553,7 +550,10 @@ namespace Net.Arqsoft.QsMapper
                         + "\nvalues (" + string.Join(",\n  ", columns.Select(x => "@" + x)) + ");"
                         + "select cast(scope_identity() as int);";
 
-                    _log.Debug($"Executing Insert: {insert}");
+                    if (CommandRunner.DebuggingOn)
+                    {
+                        _log.Debug($"Executing Insert: {insert}");
+                    }
 
                     cmd.CommandText = insert;
 
@@ -583,7 +583,7 @@ namespace Net.Arqsoft.QsMapper
             CloseConnection();
         }
 
-        private static bool AddParameter<T>(SqlCommand cmd, string field, object item, TableMap<T> map)
+        private bool AddParameter<T>(SqlCommand cmd, string field, object item, TableMap<T> map)
             where T : class, new()
         {
             var type = item.GetType();
@@ -605,10 +605,9 @@ namespace Net.Arqsoft.QsMapper
                     cmd.Parameters.AddWithValue(field, refValue ?? DBNull.Value);
                     return true;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // member not present
-                    Debug.Print("Field {0} not present on object {1}", field, item);
+                    _log.Debug($"Could not map field '{field}' to object '{item.GetType()}'", ex);
                 }
             }
             else if (prop != null)

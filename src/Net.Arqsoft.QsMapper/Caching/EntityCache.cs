@@ -112,7 +112,6 @@ namespace Net.Arqsoft.QsMapper.Caching
             var list = _dao.Query<T>().ToList();
             LoadItems(list);
             _internalCacheTime = DateTime.Now;
-            Debug.Print("EntityCache.InitCache : {0:#,##0} Objects of Type {1} cached.", _items.Count, typeof(T).Name);
         }
 
         /// <summary>
@@ -127,7 +126,6 @@ namespace Net.Arqsoft.QsMapper.Caching
 
             LoadItems(list);
             _internalCacheTime = DateTime.Now;
-            Debug.Print("EntityCache.InitCache : {0:#,##0} Objects of Type {1} cached.", _items.Count, typeof(T).Name);
         }
 
         /// <summary>
