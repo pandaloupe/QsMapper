@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -107,30 +106,6 @@ namespace Net.Arqsoft.QsMapper
             _sqlConnection.Dispose();
             _sqlConnection = null;
         }
-
-        //private SqlConnection SqlConnection
-        //{
-        //    get
-        //    {
-        //        OpenConnection();
-        //        return _sqlConnection;
-        //    }
-        //}
-
-        //public SqlConnection OpenConnection()
-        //{
-        //    if (_transaction != null)
-        //    {
-        //        return _transaction.Connection;
-        //    }
-
-        //    return _getConnection();
-        //}
-
-        //public void CloseConnection()
-        //{
-            
-        //}
 
         private SqlConnection SqlConnection => OpenConnection();
 
