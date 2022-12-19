@@ -64,7 +64,15 @@ namespace Net.Arqsoft.QsMapper
             {
                 var columnName = data.GetName(i);
                 var value = data.GetValue(i);
-                Map(o, columnName, value);
+
+                try
+                {
+                    Map(o, columnName, value);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error($"Property mapping failed for column '{columnName}', value '{value}'.", ex);
+                }
             }
         }
 
