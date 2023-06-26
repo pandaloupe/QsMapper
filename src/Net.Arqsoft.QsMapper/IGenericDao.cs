@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 namespace Net.Arqsoft.QsMapper {
     using System;
@@ -167,6 +168,12 @@ namespace Net.Arqsoft.QsMapper {
         /// </summary>
         /// <param name="action"></param>
         void ExecuteTransaction(Action action);
+
+        /// <summary>
+        /// Execute commands inside a single transaction
+        /// </summary>
+        /// <param name="action"></param>
+        Task ExecuteTransactionAsync(Func<Task> action);
 
         /// <summary>
         /// Start a execution chain for a sql server stored procedure

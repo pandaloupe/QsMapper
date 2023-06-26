@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-
+using System.Threading.Tasks;
 using log4net;
 
 using Net.Arqsoft.QsMapper.CommandBuilder;
@@ -443,6 +443,36 @@ namespace Net.Arqsoft.QsMapper
             {
                 _transaction.Dispose();
                 _transaction = null;
+            }
+        }
+
+        public async Task ExecuteTransactionAsync(Func<Task> action)
+        {
+            // already inside transaction
+            if (_transaction != null)
+            {
+                await action();
+                return;
+            }
+
+            using (var transaction = SqlConnection.BeginTransaction())
+            {
+                _transaction = transaction;
+
+                try
+                {
+                    await action();
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+                finally
+                {
+                    _transaction = null;
+                }
             }
         }
 
