@@ -20,7 +20,7 @@ namespace Net.Arqsoft.QsMapper
     /// <summary>
     /// Common implementation of IGenericDao.
     /// </summary>
-    public class GenericDao : IGenericDao, IDisposable
+    public class GenericDao : IGenericDao
     {
         public delegate SqlConnection GetConnectionDelegate();
 
@@ -563,7 +563,7 @@ namespace Net.Arqsoft.QsMapper
                     cmd.CommandText = insert;
 
                     var identity = CommandRunner.Run(cmd, x => x.ExecuteScalar());
-                    
+
                     if (identity is int i)
                     {
                         var baseItem = item as IntegerBasedEntity;
@@ -869,15 +869,19 @@ namespace Net.Arqsoft.QsMapper
             var methodInfo = GetType()
                 .GetMethods(BindingFlags.Public | BindingFlags.Instance)
                 .First(x => x.Name == methodName && x.IsGenericMethod);
+
             return methodInfo.MakeGenericMethod(new[] { argumentType });
         }
 
         public void Dispose()
         {
-            //if (_sqlConnection == null || _sqlConnection.State == ConnectionState.Closed)
-            //    return;
-            //_sqlConnection.Close();
-            //_sqlConnection.Dispose();
+            if (_sqlConnection == null || _sqlConnection.State == ConnectionState.Closed)
+            {
+                return;
+            }
+
+            _sqlConnection.Close();
+            _sqlConnection.Dispose();
         }
     }
 }

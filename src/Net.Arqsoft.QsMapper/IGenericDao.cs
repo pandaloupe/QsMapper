@@ -1,7 +1,7 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace Net.Arqsoft.QsMapper {
+namespace Net.Arqsoft.QsMapper
+{
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
@@ -11,13 +11,14 @@ namespace Net.Arqsoft.QsMapper {
     /// <summary>
     /// A Generic interface for object queries.
     /// </summary>
-    public interface IGenericDao {
+    public interface IGenericDao : IDisposable
+    {
         /// <summary>
         /// Get current date from database server
         /// </summary>
         /// <returns>Date + Time from database</returns>
         DateTime GetCurrentDate();
-        
+
         /// <summary>
         /// Defines the current Catalog. 
         /// </summary>
@@ -40,7 +41,7 @@ namespace Net.Arqsoft.QsMapper {
         /// <param name="compositeId"></param>
         /// <returns></returns>
         T Get<T>(params object[] compositeId) where T : class, new();
-            
+
         /// <summary>
         /// Return the connection currently used
         /// </summary>
@@ -52,14 +53,14 @@ namespace Net.Arqsoft.QsMapper {
         /// </summary>
         /// <returns></returns>
         SqlCommand GetSqlCommand();
-        
+
         /// <summary>
         /// Create a new SQL Command for a certain sql proc/function.
         /// </summary>
         /// <param name="procedureName"></param>
         /// <returns></returns>
         SqlCommand GetSqlCommand(string procedureName);
-        
+
         /// <summary>
         /// Apply current values from Database to object
         /// including all defined relations
@@ -82,7 +83,7 @@ namespace Net.Arqsoft.QsMapper {
         /// <typeparam name="T"></typeparam>
         /// <param name="item"></param>
         void Save<T>(T item) where T : class, new();
-        
+
         /// <summary>
         /// Save data from anonymous type
         /// only properties supplied will be updated
@@ -90,14 +91,14 @@ namespace Net.Arqsoft.QsMapper {
         /// <typeparam name="T"></typeparam>
         /// <param name="item"></param>
         void Save<T>(object item) where T : class, new();
-        
+
         /// <summary>
         /// Delete object from Database
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="item">The object to delete</param>
         void Delete<T>(T item) where T : class, new();
-        
+
         /// <summary>
         /// Delete object from Database
         /// </summary>
@@ -144,7 +145,7 @@ namespace Net.Arqsoft.QsMapper {
         /// CloseConnection
         /// </summary>
         void CloseConnection();
-        
+
         /// <summary>
         /// Begin a Database Transaction
         /// </summary>
