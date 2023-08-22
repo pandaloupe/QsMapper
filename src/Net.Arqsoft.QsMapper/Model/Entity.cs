@@ -137,13 +137,15 @@ namespace Net.Arqsoft.QsMapper.Model
         /// <returns></returns>
         public string Serialize()
         {
-            var strm = new MemoryStream();
-            var formatter = new BinaryFormatter();
-            formatter.Serialize(strm, this);
-            var bytes = new byte[strm.Length];
-            strm.Position = 0;
-            strm.Read(bytes, 0, bytes.Length);
-            return Encoding.UTF8.GetString(bytes);
+            using (var strm = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(strm, this);
+                var bytes = new byte[strm.Length];
+                strm.Position = 0;
+                strm.Read(bytes, 0, bytes.Length);
+                return Encoding.UTF8.GetString(bytes);
+            }
         }
 
         /// <summary>
@@ -155,10 +157,12 @@ namespace Net.Arqsoft.QsMapper.Model
         public static T1 Create<T1>(string data)
         {
             var bytes = Encoding.UTF8.GetBytes(data);
-            var strm = new MemoryStream(bytes);
-            var formatter = new BinaryFormatter();
-            var o = formatter.Deserialize(strm);
-            return (T1)o;
+            using (var strm = new MemoryStream(bytes))
+            {
+                var formatter = new BinaryFormatter();
+                var o = formatter.Deserialize(strm);
+                return (T1)o;
+            }
         }
 
         /// <summary>
