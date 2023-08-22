@@ -174,6 +174,12 @@ namespace Net.Arqsoft.QsMapper
         /// Execute commands inside a single transaction
         /// </summary>
         /// <param name="action"></param>
+        void ExecuteTransaction(Action<IGenericDao> action);
+
+        /// <summary>
+        /// Execute commands inside a single transaction
+        /// </summary>
+        /// <param name="action"></param>
         Task ExecuteTransactionAsync(Func<Task> action);
 
         /// <summary>

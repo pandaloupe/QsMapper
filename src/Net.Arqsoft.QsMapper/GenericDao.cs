@@ -478,10 +478,18 @@ namespace Net.Arqsoft.QsMapper
 
         public void ExecuteTransaction(Action action)
         {
+            ExecuteTransaction(x => 
+            {
+                action.Invoke();
+            });
+        }
+
+        public void ExecuteTransaction(Action<IGenericDao> action)
+        {
             // already inside transaction
             if (_transaction != null)
             {
-                action?.Invoke();
+                action?.Invoke(this);
                 return;
             }
 
@@ -491,7 +499,7 @@ namespace Net.Arqsoft.QsMapper
 
                 try
                 {
-                    action?.Invoke();
+                    action?.Invoke(this);
                     transaction.Commit();
                 }
                 catch
