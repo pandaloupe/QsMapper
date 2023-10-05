@@ -441,6 +441,7 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
                 {
                     condition.Append(param.IsOredCondition ? " or " : " and ");
                 }
+
                 condition.Append(GetConditionString(cmd, param));
             }
 
@@ -452,8 +453,10 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
             var condition = new StringBuilder();
             var paramCondition = GetSingleCondition(cmd, param);
 
-            if (paramCondition == null) throw new InvalidFilterCriteriaException(
-                $"QueryExpression [{param.FieldName}] {param.Operator} '{param.CompareTo}' can not be evaluated.");
+            if (paramCondition == null) throw new InvalidFilterCriteriaException
+            (
+                $"QueryExpression [{param.FieldName}] {param.Operator} '{param.CompareTo}' can not be evaluated."
+            );
 
             condition.Append(paramCondition);
             if (param.AdditionalParameters.Count > 0)
@@ -463,6 +466,7 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
                     condition.Append(additionalParam.IsOredCondition ? " or " : " and ");
                     condition.Append(GetConditionString(cmd, additionalParam));
                 }
+
                 return $"({condition})";
             }
 

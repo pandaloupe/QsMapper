@@ -64,13 +64,16 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder
 
             foreach (SqlParameter param in cmd.Parameters)
             {
-                Console.WriteLine(
-                    "declare @{0} {1} = {2}{3}{2}",
-                    param.ParameterName,
-                    param.SqlDbType,
-                    param.SqlValue == DBNull.Value ? "" : "'",
-                    param.SqlValue
-                );
+                var quotes = param.SqlValue == DBNull.Value ? "" : "'";
+
+                if (param.Size > 0)
+                {
+                    Console.WriteLine($"declare @{param.ParameterName} {param.SqlDbType}({param.Size}) = {quotes}{param.SqlValue}{quotes}");
+                }
+                else
+                {
+                    Console.WriteLine($"declare @{param.ParameterName} {param.SqlDbType} = {quotes}{param.SqlValue}{quotes}");
+                }
             }
 
             Console.WriteLine(cmd.CommandText);
