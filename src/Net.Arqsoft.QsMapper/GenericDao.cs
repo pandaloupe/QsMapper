@@ -262,7 +262,7 @@ namespace Net.Arqsoft.QsMapper
                 }
                 else
                 {
-                    if (_log.IsDebugEnabled)
+                    if (CommandRunner.DebuggingOn &&  _log.IsDebugEnabled)
                     {
                         _log.Debug("--begin update--");
                     }
@@ -563,7 +563,7 @@ namespace Net.Arqsoft.QsMapper
                         + "\nvalues (" + string.Join(",\n  ", columns.Select(x => "@" + x)) + ");"
                         + "select cast(scope_identity() as int);";
 
-                    if (CommandRunner.DebuggingOn)
+                    if (CommandRunner.DebuggingOn && _log.IsDebugEnabled)
                     {
                         _log.Debug($"Executing Insert: {insert}");
                     }
@@ -620,7 +620,7 @@ namespace Net.Arqsoft.QsMapper
                 }
                 catch (Exception ex)
                 {
-                    _log.Debug($"Could not map field '{field}' to object '{item.GetType()}'", ex);
+                    _log.Warn($"Could not map field '{field}' to object '{item.GetType()}'", ex);
                 }
             }
             else if (prop != null)
