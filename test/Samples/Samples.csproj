@@ -59,6 +59,12 @@
   <ItemGroup>
     <Content Include="Database\DbSetup.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Net.Arqsoft.QsMapper\Net.Arqsoft.QsMapper.csproj">
+      <Project>{f3e3aed7-30b9-4926-93c0-f4de41a894ca}</Project>
+      <Name>Net.Arqsoft.QsMapper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
