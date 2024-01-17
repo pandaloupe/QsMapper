@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2046
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Arqsoft.QsMapper", "src\Net.Arqsoft.QsMapper\Net.Arqsoft.QsMapper.csproj", "{F3E3AED7-30B9-4926-93C0-F4DE41A894CA}"
 EndProject
@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{05D5E4B7-E4E
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "test\Samples\Samples.csproj", "{C00EB2BE-5EF0-4C9B-B2E0-E651C0F27260}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Arqsoft.QsMapper.NetCore", "src\Net.Arqsoft.QsMapper.NetCore\Net.Arqsoft.QsMapper.NetCore.csproj", "{1B228C15-3F4F-4450-A42E-90153C8E9F7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,14 @@ Global
 		{C00EB2BE-5EF0-4C9B-B2E0-E651C0F27260}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C00EB2BE-5EF0-4C9B-B2E0-E651C0F27260}.Release|x64.ActiveCfg = Release|Any CPU
 		{C00EB2BE-5EF0-4C9B-B2E0-E651C0F27260}.Release|x64.Build.0 = Release|Any CPU
+		{1B228C15-3F4F-4450-A42E-90153C8E9F7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B228C15-3F4F-4450-A42E-90153C8E9F7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B228C15-3F4F-4450-A42E-90153C8E9F7C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1B228C15-3F4F-4450-A42E-90153C8E9F7C}.Debug|x64.Build.0 = Debug|Any CPU
+		{1B228C15-3F4F-4450-A42E-90153C8E9F7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B228C15-3F4F-4450-A42E-90153C8E9F7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B228C15-3F4F-4450-A42E-90153C8E9F7C}.Release|x64.ActiveCfg = Release|Any CPU
+		{1B228C15-3F4F-4450-A42E-90153C8E9F7C}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
