@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Net.Arqsoft.QsMapper</RootNamespace>
     <Title></Title>
-    <Version>4.0.0</Version>
+    <Version>4.0.1</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Markus Wolff</Authors>
     <Company>arQSoft UG</Company>
