@@ -6,13 +6,13 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Net.Arqsoft.QsMapper</RootNamespace>
     <Title></Title>
-    <Version>4.0.0</Version>
+    <Version>4.0.1</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Markus Wolff</Authors>
     <Company>arQSoft UG</Company>
     <Product>QsMapper</Product>
-    <Description>arQSoft Database Mapping Framework</Description>
-    <Copyright>®2014-2024 Markus Wikff</Copyright>
+    <Description>Conventional .Net SQL entity mapping framework.</Description>
+    <Copyright>®2014-2024 arQSoft UG / Markus Wikff</Copyright>
     <PackageProjectUrl>https://github.com/pandaloupe/QsMapper</PackageProjectUrl>
     <PackageIcon>arQSoft Logo.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
