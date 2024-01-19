@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using Net.Arqsoft.QsMapper.Model;
 using Net.Arqsoft.QsMapper.QueryBuilder;

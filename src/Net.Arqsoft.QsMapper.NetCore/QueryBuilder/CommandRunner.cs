@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using log4net;
 
 namespace Net.Arqsoft.QsMapper.QueryBuilder;

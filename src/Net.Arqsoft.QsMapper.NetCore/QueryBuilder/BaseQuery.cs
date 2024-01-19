@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Reflection;
 using System.Text;
 using log4net;
