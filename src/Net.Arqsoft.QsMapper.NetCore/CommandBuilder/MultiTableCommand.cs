@@ -8,10 +8,10 @@ public class MultiTableCommand : DatabaseCommand, IDisposable
     private DataSet _dataSet;
     private int _currentTable;
 
-    public MultiTableCommand(string commandText, ICatalog catalog, IGenericDao dao, CommandType commandType = CommandType.StoredProcedure)
+    public MultiTableCommand(string? commandText, ICatalog catalog, IGenericDao dao, CommandType commandType = CommandType.StoredProcedure)
         : base(commandText, catalog, dao, commandType) { }
 
-    public MultiTableCommand(string commandText, IGenericDao dao, CommandType commandType = CommandType.StoredProcedure)
+    public MultiTableCommand(string? commandText, IGenericDao dao, CommandType commandType = CommandType.StoredProcedure)
         : base(commandText, dao.Catalog, dao, commandType) { }
 
     public new MultiTableCommand WithParameter(string name, object value)

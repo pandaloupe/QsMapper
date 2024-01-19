@@ -77,14 +77,14 @@ public interface IQuery<T> where T : class, new()
     /// Returns the first element of query result or null (Default not implemented)
     /// </summary>
     /// <returns></returns>
-    T FirstOrDefault();
+    T? FirstOrDefault();
 
     /// <summary>
     /// Shorthand for Where(condition).FirstOrDefault();
     /// </summary>
     /// <param name="condition"></param>
     /// <returns></returns>
-    T FirstOrDefault(Func<QueryParameter, QueryParameter> condition);
+    T? FirstOrDefault(Func<QueryParameter, QueryParameter> condition);
 
     /// <summary>
     /// Execute query and return mapped result

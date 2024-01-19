@@ -113,7 +113,7 @@ public class GenericDao : IGenericDao
         return date;
     }
 
-    public T Get<T>(object id) where T : class, new()
+    public T? Get<T>(object id) where T : class, new()
     {
         var map = Catalog.GetTableMap<T>();
         var mapper = Catalog.GetPropertyMapper<T>();
@@ -127,12 +127,12 @@ public class GenericDao : IGenericDao
         query.Parameters.AddWithValue(keyName, id);
 
         using var reader = CommandRunner.Run(query, x => x.ExecuteReader());
-        T result = null;
-        if (reader.Read())
+        if (!reader.Read())
         {
-            result = mapper.Map(reader);
+            return null;
         }
 
+        var result = mapper.Map(reader);
         reader.Close();
         map.GetQueryPlugin(this, mapper).ResolveRelations(result);
         return result;
@@ -143,7 +143,7 @@ public class GenericDao : IGenericDao
         return SqlConnection;
     }
 
-    public SqlCommand GetSqlCommand(string queryText)
+    public SqlCommand GetSqlCommand(string? queryText)
     {
         var cmd = new SqlCommand(queryText, SqlConnection);
         if (_transaction != null)
@@ -205,7 +205,7 @@ public class GenericDao : IGenericDao
         }
     }
 
-    public T Get<T>(params object[] compositeId) where T : class, new()
+    public T? Get<T>(params object[] compositeId) where T : class, new()
     {
         var map = Catalog.GetTableMap<T>();
         var mapper = Catalog.GetPropertyMapper<T>();
@@ -219,12 +219,12 @@ public class GenericDao : IGenericDao
         map.AddKeyParams(query, compositeId);
 
         using var reader = CommandRunner.Run(query, x => x.ExecuteReader());
-        T result = null;
-        if (reader.Read())
+        if (!reader.Read())
         {
-            result = mapper.Map(reader);
+            return null;
         }
 
+        var result = mapper.Map(reader);
         reader.Close();
         map.GetQueryPlugin(this, mapper).ResolveRelations(result);
         return result;
@@ -491,12 +491,12 @@ public class GenericDao : IGenericDao
         }
     }
 
-    public ICommand Execute(string procedureName)
+    public ICommand Execute(string? procedureName)
     {
         return new DatabaseCommand(procedureName, Catalog, this);
     }
 
-    public ICommand ExecuteSql(string queryText)
+    public ICommand ExecuteSql(string? queryText)
     {
         return new DatabaseCommand(queryText, Catalog, this, CommandType.Text);
     }
@@ -845,7 +845,7 @@ public class GenericDao : IGenericDao
         return false;
     }
 
-    private MethodInfo GetMethod(string methodName, Type argumentType)
+    private MethodInfo GetMethod(string methodName, Type? argumentType)
     {
         var methodInfo = GetType()
             .GetMethods(BindingFlags.Public | BindingFlags.Instance)

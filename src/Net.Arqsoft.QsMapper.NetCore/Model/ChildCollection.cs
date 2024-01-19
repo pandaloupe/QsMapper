@@ -8,55 +8,47 @@ namespace Net.Arqsoft.QsMapper.Model;
 public class ChildCollection
 {
     /// <summary>
-    /// Constructor setting default command type as TableOrView.
-    /// </summary>
-    public ChildCollection()
-    {
-        GetCommandType = CommandType.TableOrView;
-    }
-
-    /// <summary>
     /// Class of child elements.
     /// </summary>
-    public Type ChildType { get; set; }
+    public Type? ChildType { get; set; }
 
     /// <summary>
     /// Property name of parent holding the child elements.
     /// </summary>
-    public string PropertyName { get; set; }
+    public string? PropertyName { get; set; }
 
     /// <summary>
     /// Table storing the children.
     /// </summary>
-    public string TableName { get; set; }
+    public string? TableName { get; set; }
 
     /// <summary>
     /// Name of stored procedure when command type is set to Function or StoredProcedure. 
     /// </summary>
-    public string GetCommandName { get; set; }
+    public string? GetCommandName { get; set; }
 
     /// <summary>
     /// Type of getter.
     /// </summary>
-    public CommandType GetCommandType { get; set; }
+    public CommandType GetCommandType { get; set; } = CommandType.TableOrView;
 
     /// <summary>
     /// Table field for parent id.
     /// </summary>
-    public string MasterFieldName { get; set; }
+    public string? MasterFieldName { get; set; }
 
     /// <summary>
     /// Table field for child id.
     /// </summary>
-    public string ChildFieldName { get; set; }
+    public string? ChildFieldName { get; set; }
 
     /// <summary>
     /// Property name for parent in child class.
     /// </summary>
-    public string MasterPropertyName { get; set; }
+    public string? MasterPropertyName { get; set; }
 
     /// <summary>
     /// Property name for child collection in parent class.
     /// </summary>
-    public string ChildPropertyName { get; set; }
+    public string? ChildPropertyName { get; set; }
 }

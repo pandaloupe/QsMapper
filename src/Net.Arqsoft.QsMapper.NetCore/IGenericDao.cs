@@ -29,7 +29,7 @@ public interface IGenericDao : IDisposable
     /// <typeparam name="T"></typeparam>
     /// <param name="id"></param>
     /// <returns></returns>
-    T Get<T>(object id) where T : class, new();
+    T? Get<T>(object id) where T : class, new();
 
     /// <summary>
     /// Return a single object from Database using a composite key
@@ -57,7 +57,7 @@ public interface IGenericDao : IDisposable
     /// </summary>
     /// <param name="procedureName"></param>
     /// <returns></returns>
-    SqlCommand GetSqlCommand(string procedureName);
+    SqlCommand GetSqlCommand(string? procedureName);
 
     /// <summary>
     /// Apply current values from Database to object
@@ -185,12 +185,12 @@ public interface IGenericDao : IDisposable
     /// </summary>
     /// <param name="procedureName">Name of the procedure including Schema</param>
     /// <returns>ICommand object</returns>
-    ICommand Execute(string procedureName);
+    ICommand Execute(string? procedureName);
 
     /// <summary>
     /// Start a execution chain for a sql server stored procedure
     /// </summary>
     /// <param name="queryText">Plain SQL query text</param>
     /// <returns>ICommand object</returns>
-    ICommand ExecuteSql(string queryText);
+    ICommand ExecuteSql(string? queryText);
 }

@@ -33,13 +33,13 @@ public class TableMap<T> where T : class, new()
     private string[] _readonlyFields;
     private IDictionary<string, IComplexProperty> _references;
 
-    private OrderParameter _currentOrderParameter;
+    private OrderParameter? _currentOrderParameter;
 
     public ICatalog Catalog { get; set; }
 
-    private void AddOrderParameter(OrderParameter param)
+    private void AddOrderParameter(OrderParameter? param)
     {
-        if (DefaultOrderParameters == null) DefaultOrderParameters = new List<OrderParameter>();
+        if (DefaultOrderParameters == null) DefaultOrderParameters = new List<OrderParameter?>();
         DefaultOrderParameters.Add(param);
     }
 
@@ -153,10 +153,10 @@ public class TableMap<T> where T : class, new()
         set { _twoWayRelations = value; }
     }
 
-    private IList<OrderParameter> _defaultOrderParameters;
-    public IList<OrderParameter> DefaultOrderParameters
+    private IList<OrderParameter?>? _defaultOrderParameters;
+    public IList<OrderParameter?>? DefaultOrderParameters
     {
-        get { return _defaultOrderParameters ?? (_defaultOrderParameters = new List<OrderParameter>()); }
+        get { return _defaultOrderParameters ?? (_defaultOrderParameters = new List<OrderParameter?>()); }
         set { _defaultOrderParameters = value; }
     }
 
@@ -524,7 +524,7 @@ public class TableMap<T> where T : class, new()
 
     #region BaseQuery Implementation
 
-    public BaseQuery<T> GetQueryPlugin(GenericDao dao, PropertyMapper<T> mapper)
+    public BaseQuery<T> GetQueryPlugin(GenericDao? dao, PropertyMapper<T> mapper)
     {
         if (QueryPlugin == null)
         {

@@ -15,9 +15,9 @@ namespace Net.Arqsoft.QsMapper.QueryBuilder;
 public class BaseQuery<T> : IQuery<T> where T : class, new()
 {
 
-    private string _baseQuery;
+    private string? _baseQuery;
     private int _top;
-    private OrderParameter _currentOrderParameter;
+    private OrderParameter? _currentOrderParameter;
     private readonly ILog _log = LogManager.GetLogger(typeof(BaseQuery<T>));
 
     /// <summary>
@@ -31,12 +31,12 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
         PropertyMapper = catalog.GetPropertyMapper<T>();
     }
 
-    private ICatalog _catalog;
+    private readonly ICatalog _catalog;
 
     /// <summary>
     /// Dao implementation.
     /// </summary>
-    public IGenericDao Dao { get; set; }
+    public IGenericDao? Dao { get; set; }
 
     /// <summary>
     /// Table map to be used.
@@ -48,25 +48,25 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
     /// </summary>
     protected readonly PropertyMapper<T> PropertyMapper;
 
-    private IList<QueryParameter> _queryParameters;
+    private IList<QueryParameter>? _queryParameters;
 
     /// <summary>
     /// List of query parameters.
     /// </summary>
-    public IList<QueryParameter> QueryParameters
+    public IList<QueryParameter>? QueryParameters
     {
-        get => _queryParameters ?? (_queryParameters = new List<QueryParameter>());
+        get => _queryParameters ??= new List<QueryParameter>();
         set => _queryParameters = value;
     }
 
-    private IList<OrderParameter> _orderParameters;
+    private IList<OrderParameter?>? _orderParameters;
 
     /// <summary>
     /// List of order parameters.
     /// </summary>
-    public IList<OrderParameter> OrderParameters
+    public IList<OrderParameter?>? OrderParameters
     {
-        get => _orderParameters ?? (_orderParameters = new List<OrderParameter>());
+        get => _orderParameters ??= new List<OrderParameter?>();
         set => _orderParameters = value;
     }
 
@@ -84,7 +84,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
     /// </summary>
     /// <param name="tableOrView"></param>
     /// <returns></returns>
-    public IQuery<T> NewQuery(string tableOrView)
+    public IQuery<T> NewQuery(string? tableOrView)
     {
         if (!string.IsNullOrEmpty(tableOrView))
         {
@@ -198,7 +198,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
     {
         get
         {
-            _currentOrderParameter.SortDescending = true;
+            _currentOrderParameter!.SortDescending = true;
             //prevent settings order direction anew
             _currentOrderParameter = null;
             return this;
@@ -212,7 +212,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
     {
         get
         {
-            _currentOrderParameter.SortDescending = false;
+            _currentOrderParameter!.SortDescending = false;
             //prevent settings order direction anew
             _currentOrderParameter = null;
             return this;
@@ -221,26 +221,22 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
 
     #endregion
 
-    private void AddOrderParameter(OrderParameter param)
+    private void AddOrderParameter(OrderParameter? param)
     {
-        if (OrderParameters == null) OrderParameters = new List<OrderParameter>();
+        OrderParameters ??= new List<OrderParameter?>();
         OrderParameters.Add(param);
     }
     private void AddQueryParameter(QueryParameter param)
     {
-        if (QueryParameters == null)
-        {
-            QueryParameters = new List<QueryParameter>();
-        }
-
+        QueryParameters ??= new List<QueryParameter>();
         QueryParameters.Add(param);
     }
 
     private SqlCommand GetQueryCommand()
     {
-        var cmd = Dao.GetSqlCommand();
+        var cmd = Dao!.GetSqlCommand();
         var queryText = GetShortQuery();
-        if (QueryParameters.Count > 0)
+        if (QueryParameters?.Count > 0)
         {
             var condition = GetConditionString(cmd);
             queryText += "\nwhere " + condition;
@@ -271,7 +267,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
     {
         using var cmd = GetQueryCommand();
         var result = GetFindResult(cmd);
-        return result.Select(x => x as T1).ToList();
+        return result.Select(x => x as T1).ToList()!;
     }
 
     /// <summary>
@@ -297,9 +293,9 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
     /// <returns></returns>
     public virtual int Count()
     {
-        using var cmd = Dao.GetSqlCommand();
+        using var cmd = Dao!.GetSqlCommand();
         var queryText = GetCountQuery();
-        if (QueryParameters.Count > 0)
+        if (QueryParameters?.Count > 0)
         {
             var condition = GetConditionString(cmd);
             queryText += "\nwhere " + condition;
@@ -319,7 +315,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
     /// </summary>
     /// <param name="condition"></param>
     /// <returns></returns>
-    public virtual T FirstOrDefault(Func<QueryParameter, QueryParameter> condition)
+    public virtual T? FirstOrDefault(Func<QueryParameter, QueryParameter> condition)
     {
         return Where(condition).FirstOrDefault();
     }
@@ -328,18 +324,18 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
     /// Get first object (or null).
     /// </summary>
     /// <returns></returns>
-    public virtual T FirstOrDefault()
+    public virtual T? FirstOrDefault()
     {
-        using var cmd = Dao.GetSqlCommand();
+        using var cmd = Dao!.GetSqlCommand();
         _top = 1;
         var queryText = GetShortQuery();
-        if (QueryParameters.Count > 0)
+        if (QueryParameters?.Count > 0)
         {
             var condition = GetConditionString(cmd);
             queryText += "\nwhere " + condition;
         }
 
-        if (OrderParameters.Count > 0)
+        if (OrderParameters?.Count > 0)
         {
             queryText += GetOrderByClause();
         }
@@ -381,12 +377,16 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
         var orderParameters = OrderParameters;
         if (OrderParameters == null || OrderParameters.Count == 0)
         {
-            if (TableMap.DefaultOrderParameters == null || TableMap.DefaultOrderParameters.Count == 0) return "";
+            if (TableMap.DefaultOrderParameters == null || TableMap.DefaultOrderParameters.Count == 0)
+            {
+                return "";
+            }
+
             orderParameters = TableMap.DefaultOrderParameters;
         }
 
         var orderings = new List<string>();
-        foreach (var op in orderParameters)
+        foreach (var op in orderParameters!)
         {
             if (op == null) continue;
             var orderBy = "[" + op.FieldName + "]";
@@ -420,7 +420,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
     private string GetConditionString(SqlCommand cmd)
     {
         var condition = new StringBuilder();
-        foreach (var param in QueryParameters)
+        foreach (var param in QueryParameters!)
         {
             if (condition.Length > 0)
             {
@@ -458,9 +458,9 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
         return condition.ToString();
     }
 
-    protected internal virtual string GetSingleCondition(SqlCommand cmd, QueryParameter param)
+    protected internal virtual string? GetSingleCondition(SqlCommand cmd, QueryParameter param)
     {
-        string result = null;
+        string? result = null;
         var field = $"[{param.FieldName}]";
         switch (param.Operator)
         {
@@ -517,6 +517,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
                 break;
             }
         }
+
         return result;
     }
 
@@ -554,9 +555,12 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
         }
     }
 
-    private void MapChildCollection(ChildCollection r, object item)
+    private void MapChildCollection(ChildCollection r, object? item)
     {
-        if (item == null || string.IsNullOrEmpty(r.GetCommandName)) return;
+        if (item == null || string.IsNullOrEmpty(r.GetCommandName))
+        {
+            return;
+        }
 
         var start = DateTime.Now;
 
@@ -564,7 +568,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
 
         if (r.GetCommandType == CommandType.StoredProcedure)
         {
-            cmd = Dao.GetSqlCommand(r.GetCommandName);
+            cmd = Dao!.GetSqlCommand(r.GetCommandName);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue(typeof(T).Name + "Id", TableMap.GetKeyValues(item).First());
         }
@@ -575,7 +579,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
             var masterField = r.MasterFieldName ?? $"{typeof(T).Name}Id";
             var condition = $"[{masterField}]=@p1";
             var query = $"select * from {viewName} where {condition}";
-            cmd = Dao.GetSqlCommand(query);
+            cmd = Dao!.GetSqlCommand(query);
             cmd.Parameters.AddWithValue("p1", TableMap.GetKeyValues(item).First());
         }
 
@@ -584,7 +588,7 @@ public class BaseQuery<T> : IQuery<T> where T : class, new()
             //get generic mapper for child property
             var childType = new[] { r.ChildType };
             var getMapper = _catalog.GetType().GetMethod("GetPropertyMapper");
-            var getGenericMapper = getMapper.MakeGenericMethod(childType);
+            var getGenericMapper = getMapper!.MakeGenericMethod(childType);
             var mapper = getGenericMapper.Invoke(_catalog, null);
 
             var mapMethod = mapper.GetType().GetMethod("MapAll", new[] { typeof(IDataReader) });

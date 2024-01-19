@@ -14,7 +14,7 @@ public class DatabaseCommand : ICommand
 {
     private readonly IGenericDao _dao;
     protected readonly ICatalog Catalog;
-    private readonly string _commandText;
+    private readonly string? _commandText;
     private readonly IDictionary<string, object> _parameters;
     private readonly CommandType _commandType;
 
@@ -25,7 +25,7 @@ public class DatabaseCommand : ICommand
     /// <param name="catalog">ICatalog</param>
     /// <param name="dao">IGenericDao providing connection</param>
     /// <param name="commandType"></param>
-    public DatabaseCommand(string commandText, ICatalog catalog, IGenericDao dao, CommandType commandType = CommandType.StoredProcedure)
+    public DatabaseCommand(string? commandText, ICatalog catalog, IGenericDao dao, CommandType commandType = CommandType.StoredProcedure)
     {
         _commandText = commandText;
         _dao = dao;
