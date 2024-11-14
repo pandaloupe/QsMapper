@@ -13,11 +13,11 @@ public abstract class Entity<T>(T id) : IEntity<T>
     public override int GetHashCode()
     {
         // ReSharper disable once NonReadonlyMemberInGetHashCode
-        return EqualityComparer<T>.Default.GetHashCode(Id);
+        return Id == null ? EqualityComparer<int>.Default.GetHashCode(0) : EqualityComparer<T>.Default.GetHashCode(Id);
     }
 
     /// <inheritdoc />
-    public T Id { get; set; } = id;
+    public virtual T Id { get; set; } = id;
 
     /// <inheritdoc />
     public abstract bool IsNew { get; }
