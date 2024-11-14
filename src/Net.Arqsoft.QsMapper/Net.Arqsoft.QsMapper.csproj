@@ -139,9 +139,9 @@
   <ItemGroup>
     <!-- ... -->
     <PackageReference Include="log4net">
-      <Version>2.0.15</Version>
+      <Version>3.0.3</Version>
     </PackageReference>
-    <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.8.0" PrivateAssets="all" />
+    <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.12.1" PrivateAssets="all" />
     <!-- ... -->
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
