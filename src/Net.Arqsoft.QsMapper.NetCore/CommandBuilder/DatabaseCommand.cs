@@ -103,6 +103,45 @@ public class DatabaseCommand : ICommand
         return (T)cmd.Parameters["@RETURN_VALUE"].Value;
     }
 
+    public IList<IDictionary<string, object?>> AsList()
+    {
+        using var cmd = GetCommand();
+        var result = new List<IDictionary<string, object?>>();
+        
+        using var reader = CommandRunner.Run(cmd, x => x.ExecuteReader());
+        while (reader.Read())
+        {
+            var record = new Dictionary<string, object?>();
+            for (var i = 0; i < reader.FieldCount; i++)
+            {
+                var value = reader.GetValue(i);
+                var fieldName = reader.GetName(i);
+                if (string.IsNullOrEmpty(fieldName))
+                {
+                    fieldName = "NN";
+                }
+
+                if (record.ContainsKey(fieldName))
+                {
+                    var j = 0;
+                    while (record.ContainsKey($"{fieldName}_{j}"))
+                    {
+                        j++;
+                    }
+
+                    fieldName = $"{fieldName}_{j}";
+                }
+
+                record.Add(fieldName, Equals(value, DBNull.Value) ? null : value);
+            }
+
+            result.Add(record);
+        }
+
+        reader.Close();
+        return result;
+    }
+
     /// <summary>
     /// Prepare command and set parameters
     /// </summary>

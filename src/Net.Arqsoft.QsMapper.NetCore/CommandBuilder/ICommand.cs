@@ -43,4 +43,9 @@ public interface ICommand
     /// </summary>
     T AsFunction<T>();
 
+    /// <summary>
+    /// Execute the stored procedure and retuen all records of the underlying reader as IDictionary (ColumnName, Value).
+    /// </summary>
+    /// <returns></returns>
+    IList<IDictionary<string, object?>> AsList();
 }
