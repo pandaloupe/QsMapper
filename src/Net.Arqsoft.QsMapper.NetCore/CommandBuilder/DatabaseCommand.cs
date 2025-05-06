@@ -121,18 +121,7 @@ public class DatabaseCommand : ICommand
                     fieldName = "NN";
                 }
 
-                if (record.ContainsKey(fieldName))
-                {
-                    var j = 0;
-                    while (record.ContainsKey($"{fieldName}_{j}"))
-                    {
-                        j++;
-                    }
-
-                    fieldName = $"{fieldName}_{j}";
-                }
-
-                record.Add(fieldName, Equals(value, DBNull.Value) ? null : value);
+                AddValue(record, fieldName, value);
             }
 
             result.Add(record);
@@ -140,6 +129,35 @@ public class DatabaseCommand : ICommand
 
         reader.Close();
         return result;
+    }
+
+    private void AddValue(IDictionary<string, object?> record, string fieldName, object value)
+    {
+        var iPos = fieldName.IndexOf('.');
+        if (iPos > 0)
+        {
+            var parentName = fieldName.Substring(0, iPos);
+            if (!record.ContainsKey(parentName))
+            {
+                record.Add(parentName, new Dictionary<string, object?>());
+            }
+
+            AddValue((IDictionary<string, object?>)record[parentName]!, fieldName.Substring(iPos + 1), value);
+            return;
+        }
+
+        if (record.ContainsKey(fieldName))
+        {
+            var j = 0;
+            while (record.ContainsKey($"{fieldName}_{j}"))
+            {
+                j++;
+            }
+
+            fieldName = $"{fieldName}_{j}";
+        }
+
+        record.Add(fieldName, Equals(value, DBNull.Value) ? null : value);
     }
 
     /// <summary>

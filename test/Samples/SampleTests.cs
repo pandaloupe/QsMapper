@@ -66,9 +66,25 @@ public class SampleTests
     }
 
     [Test]
-    public void TestReadCustomers()
+    public void TestReadAppointments()
     {
-        var customers = _dao.ExecuteSql("select top 100 Id, SubsidiaryId + 1, * from Schedule.Appointments").AsList();
+        var customers = _dao.ExecuteSql("""
+                                        select top 100 a.Id, 
+                                            a.SubsidiaryId as 'Subsidiary.Id',
+                                            s.CompanyName as 'Subsidiary.Name',
+                                            a.CustomerId as 'Customer.Id',
+                                            cy.Id as 'Subsidiary.Country.Id',
+                                            cy.Name as 'Subsidiary.Country.Name',
+                                            c.Name as 'Customer.Name',
+                                            a.Date,
+                                            a.StartTime,
+                                            a.Duration
+                                        from Schedule.Appointments a
+                                            left join Contacts.Customers c on c.Id = a.CustomerId
+                                            left join System.Subsidiaries s on s.Id = a.SubsidiaryId
+                                            left join System.Countries cy on cy.Id = s.CountryId
+                                        order by Id
+                                        """).AsList();
         var json = JsonConvert.SerializeObject(customers, Formatting.Indented);
         Console.WriteLine(json);
     }
